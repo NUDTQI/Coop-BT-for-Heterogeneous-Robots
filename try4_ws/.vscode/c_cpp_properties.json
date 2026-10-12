@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/sherry/try4_ws/install/turtlebot3_fake_node/include/**",
+        "/home/sherry/try4_ws/install/turtlebot3_msgs/include/**",
+        "/home/sherry/try4_ws/install/turtlebot3_gazebo/include/**",
+        "/home/sherry/try4_ws/install/py_trees_ros_interfaces/include/**",
+        "/home/sherry/try4_ws/install/behaviortree_cpp/include/**",
+        "/opt/ros/galactic/include/**",
+        "/home/sherry/try4_ws/src/behaviortree_cpp/include/**",
+        "/home/sherry/try4_ws/src/turtlebot3/turtlebot3_node/include/**",
+        "/home/sherry/try4_ws/src/turtlebot3_behavior_demos/tb3_autonomy/include/**",
+        "/home/sherry/try4_ws/src/turtlebot3_simulations/turtlebot3_fake_node/include/**",
+        "/home/sherry/try4_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

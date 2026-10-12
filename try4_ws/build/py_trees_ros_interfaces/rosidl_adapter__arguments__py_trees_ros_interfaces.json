@@ -1,0 +1,27 @@
+{
+  "package_name": "py_trees_ros_interfaces",
+  "non_idl_tuples": [
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/CloseBlackboardStream.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/CloseSnapshotStream.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/GetBlackboardVariables.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/IntrospectPublishers.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/IntrospectServices.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/IntrospectSubscribers.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/OpenBlackboardStream.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/OpenSnapshotStream.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/ReconfigureSnapshotStream.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:srv/StatusReport.srv",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/ActivityItem.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/Behaviour.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/BehaviourTree.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/KeyValue.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/PublisherDetails.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/Statistics.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/ServiceDetails.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/SnapshotStreamParameters.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:msg/SubscriberDetails.msg",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:action/Dock.action",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:action/Rotate.action",
+    "/home/sherry/try_ws/src/py_trees_ros_interfaces:action/MoveBase.action"
+  ]
+}

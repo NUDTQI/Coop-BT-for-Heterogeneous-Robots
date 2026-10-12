@@ -1,0 +1,10 @@
+# Defines object locations as [x, y, theta]
+location1: [-1.0, -1.0, -0.785] #不改，左上方
+location2: [0.5, 3.8, 1.9] #改了，原来是0.5+4，现在在正右方
+location3: [4.0, 0.5, 1.571] #不改，在正右方
+location4: [3.0, 2.5, -1.571] #不改，在正左方
+location5: [-0.35, 2.7, 1.5] #改了，正左方
+location6: [1.0, 2.5, 0.785]
+location7: [3.5, 3.8, 1.7]
+location8: [5.0, 3.2, 1.5]
+

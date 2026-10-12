@@ -1,0 +1,39 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from py_trees_ros_interfaces/action/Rotate.action
+// generated code does not contain a copyright notice
+
+
+module py_trees_ros_interfaces {
+  module action {
+    @verbatim (language="comment", text=
+      "##############################################################################" "\n"
+      " Rotate" "\n"
+      "##############################################################################" "\n"
+      "" "\n"
+      " Rotates the robot a full 2pi radians." "\n"
+      " Used for the py_trees_ros mocking demos/tests!" "\n"
+      "" "\n"
+      "##############################################################################")
+    struct Rotate_Goal {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct Rotate_Result {
+      @verbatim (language="comment", text=
+        "###################" "\n"
+        " Result" "\n"
+        "###################")
+      string message;
+    };
+    struct Rotate_Feedback {
+      @verbatim (language="comment", text=
+        "###################" "\n"
+        " Feedback" "\n"
+        "###################")
+      float percentage_completed;
+
+      @verbatim (language="comment", text=
+        " in radians")
+      float angle_rotated;
+    };
+  };
+};
