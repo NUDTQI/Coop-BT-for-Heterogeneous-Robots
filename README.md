@@ -73,10 +73,10 @@ $ ros2 launch ros_bt_py_web_gui ros_bt_py_web_gui.launch.py web_server_port:=808
 
 For the BTs in the example of the paper, their web server ports are different from 8085 to 8089, bu their web server addresses are the same 127.0.0.1.
 
-## Heterogeneous Robot Caoability Settings
+## Heterogeneous Robot Capability Settings
 
 For robots with different capabilities, the kind of capabilities can be set in the `capabilities` folder of each package in src folder.
 
 ## Simulation Environment Setting
 
-the simulation workship is in `simulation` branch.
+The simulation workshop is in `simulation` branch.
