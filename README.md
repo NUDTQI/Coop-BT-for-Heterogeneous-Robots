@@ -80,3 +80,11 @@ For robots with different capabilities, the kind of capabilities can be set in t
 ## Simulation Environment Setting
 
 The simulation workshop is in `simulation` branch.
+
+```bash
+$ cd try4_ws
+$ source install/setup.bash
+$ source ./install/setup.bash
+$ source ./install/tb3_worlds/share/tb3_worlds/local_setup.bash
+$ ros2 launch tb3_worlds tb3_demo_world.launch.py
+```
