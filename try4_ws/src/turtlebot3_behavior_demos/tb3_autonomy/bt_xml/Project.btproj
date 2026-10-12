@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="tree_queue.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="GetLocationFromQueue">
+            <inout_port name="loc_names"/>
+            <output_port name="target_location"/>
+        </Action>
+        <Action ID="GoToPose">
+            <input_port name="loc"/>
+            <input_port name="loc_poses"/>
+        </Action>
+        <Action ID="LookForObject"/>
+        <Action ID="SetLocations">
+            <output_port name="num_locs"/>
+            <output_port name="loc_names"/>
+            <output_port name="loc_poses"/>
+        </Action>
+    </TreeNodesModel>
+</root>
