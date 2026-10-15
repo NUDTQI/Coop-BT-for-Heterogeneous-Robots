@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""
-行为树自动化控制器
-支持动态加载、停止、切换 YAML 行为树文件
-"""
+
 
 import rclpy
 from rclpy.node import Node
@@ -14,13 +11,13 @@ import time
 
 
 class BTreeAutomator(Node):
-    """行为树自动化控制器"""
+    
     
     def __init__(self, namespace):
         super().__init__('btree_automator', namespace=namespace)
         self.namespace = namespace.lstrip('/')
         
-        # 创建服务客户端
+        
         self.load_client = self.create_client(
             LoadTree,
             f'/{self.namespace}/BehaviorTreeNode/load_tree'
@@ -31,20 +28,20 @@ class BTreeAutomator(Node):
             f'/{self.namespace}/BehaviorTreeNode/control_tree_execution'
         )
         
-        self.get_logger().info(f'行为树自动化控制器已启动 (/{self.namespace})')
+        self.get_logger().info(f'Start BT controller (/{self.namespace})')
     
     def wait_for_service(self, client, timeout=60.0):
-        """等待服务可用"""
+        
         start_time = time.time()
         while not client.wait_for_service(timeout_sec=1.0):
             if time.time() - start_time > timeout:
-                self.get_logger().error(f'等待服务超时 ({timeout}s)')
+                self.get_logger().error(f'Timeout when waiting for service ({timeout}s)')
                 return False
-            self.get_logger().info('等待服务...')
+            self.get_logger().info('Wating for service...')
         return True
     
     def load_tree(self, tree_path):
-        """加载行为树文件"""
+        
         if not self.wait_for_service(self.load_client):
             return False
         
@@ -52,7 +49,7 @@ class BTreeAutomator(Node):
         req.tree = Tree(path=tree_path)
         req.permissive = False
         
-        self.get_logger().info(f'正在加载树文件：{tree_path}')
+        self.get_logger().info(f'Loading BT files: {tree_path}')
         future = self.load_client.call_async(req)
         
         try:
@@ -60,19 +57,19 @@ class BTreeAutomator(Node):
             response = future.result()
             
             if response and response.success:
-                self.get_logger().info(f'✅ 树加载成功：{tree_path}')
+                self.get_logger().info(f'Successfullt loading BT: {tree_path}')
                 return True
             else:
-                error_msg = response.error_message if response else "未知错误"
-                self.get_logger().error(f'❌ 树加载失败：{error_msg}')
+                error_msg = response.error_message if response else "Error not specified"
+                self.get_logger().error(f'Failed to load BT: {error_msg}')
                 return False
                 
         except Exception as e:
-            self.get_logger().error(f'服务调用异常：{str(e)}')
+            self.get_logger().error(f'Service has mistakes: {str(e)}')
             return False
     
     def control_tree(self, command, tick_frequency_hz=0.0):
-        """控制行为树执行"""
+        
         if not self.wait_for_service(self.control_client):
             return False
         
@@ -89,67 +86,65 @@ class BTreeAutomator(Node):
             if response and response.success:
                 return True
             else:
-                error_msg = response.error_message if response else "未知错误"
-                self.get_logger().error(f'控制失败：{error_msg}')
+                error_msg = response.error_message if response else "unknown mistake"
+                self.get_logger().error(f'Failed to control: {error_msg}')
                 return False
                 
         except Exception as e:
-            self.get_logger().error(f'服务调用异常：{str(e)}')
+            self.get_logger().error(f'Service has mistakes: {str(e)}')
             return False
     
     def start_tree(self, tick_frequency_hz=10.0):
-        """启动行为树（周期性 tick）"""
-        self.get_logger().info('🚀 启动行为树')
+        
+        self.get_logger().info('Start BT...')
         return self.control_tree(
             ControlTreeExecution.Request.TICK_PERIODICALLY,
             tick_frequency_hz
         )
     
     def stop_tree(self):
-        """停止行为树"""
-        self.get_logger().info('🛑 停止行为树')
+        
+        self.get_logger().info('Stop BT...')
         return self.control_tree(ControlTreeExecution.Request.SHUTDOWN)#STOP)
     
     def shutdown_tree(self):
-        """关闭行为树"""
-        self.get_logger().info('⏹️ 关闭行为树')
+        
+        self.get_logger().info('Shutdown BT...')
         time.sleep(0.5)
         return self.control_tree(ControlTreeExecution.Request.SHUTDOWN)
     
     def run_tree_sequence(self, tree_path, duration=6.0, tick_frequency_hz=10.0):
-        """运行行为树序列：加载 -> 启动 -> 等待 -> 停止"""
-        self.get_logger().info(f'=== 开始执行任务树 (持续时间：{duration}s) ===')
         
-        # 1. 加载树
+        self.get_logger().info(f'Start to execute task BT... (Duration: {duration}s)')
+        
+        
         if not self.load_tree(tree_path):
             return False
         
-        # 2. 启动树
+        
         time.sleep(0.5)
         if not self.start_tree(tick_frequency_hz):
             return False
         
-        # 3. 运行指定时间
-        self.get_logger().info(f'行为树运行中... ({duration}秒)')
+        
+        self.get_logger().info(f'BT is working... ({duration}s)')
         time.sleep(duration)
         
-        # 4. 停止树
-        # if not self.stop_tree():
-        #     self.get_logger().warn('停止树时出现问题，继续执行')
         
-        self.get_logger().info(f'=== 任务树执行完成 ===')
+        
+        self.get_logger().info(f'Execution of the task BT is done.')
         return True
 
 
 def main():
-    parser = argparse.ArgumentParser(description='行为树自动化控制器')
-    parser.add_argument('-n', '--namespace', required=True, help='机器人命名空间 (如：turtle0)')
-    parser.add_argument('-t', '--tree', required=True, help='行为树文件路径')
-    parser.add_argument('-d', '--duration', type=float, default=8.0, help='运行持续时间 (秒)')
-    parser.add_argument('-f', '--frequency', type=float, default=10.0, help='tick 频率 (Hz)')
-    parser.add_argument('--start', action='store_true', help='加载后启动')
-    parser.add_argument('--stop', action='store_true', help='停止当前树')
-    parser.add_argument('--shutdown', action='store_true', help='关闭当前树')
+    parser = argparse.ArgumentParser(description='BT automation controller')
+    parser.add_argument('-n', '--namespace', required=True, help='robot namespace (such as turtle0)')
+    parser.add_argument('-t', '--tree', required=True, help='BT file path')
+    parser.add_argument('-d', '--duration', type=float, default=8.0, help='working duration (seconds)')
+    parser.add_argument('-f', '--frequency', type=float, default=10.0, help='tick frequency (Hz)')
+    parser.add_argument('--start', action='store_true', help='start BT after loading')
+    parser.add_argument('--stop', action='store_true', help='stop the current BT')
+    parser.add_argument('--shutdown', action='store_true', help='shutdown the current BT')
     
     args = parser.parse_args()
     

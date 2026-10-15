@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-多机器人行为树控制器
-基于 jilu3 配置，支持环境自动设置和多机器人管理
+Multi Robot BT Controller
 """
 
 import subprocess
@@ -15,7 +14,7 @@ from dataclasses import dataclass
 
 @dataclass
 class RobotConfig:
-    """机器人配置类"""
+    
     name: str
     ros_port: int
     ros_address: str
@@ -23,7 +22,6 @@ class RobotConfig:
     web_server_address: str
 
 
-# 基于 jilu3 的机器人配置
 ROBOT_CONFIGS: Dict[str, RobotConfig] = {
     "turtle0": RobotConfig("turtle0", 9090, "127.0.0.1", 8085, "127.0.0.1"),
     "turtle1": RobotConfig("turtle1", 9095, "127.1.0.0", 8090, "127.1.0.0"),
@@ -37,7 +35,7 @@ WORKSPACE_PATH = "/home/sherry/coop-bt-ws"
 
 
 class MultiRobotBTController:
-    """多机器人行为树控制器"""
+    
     
     def __init__(self, workspace: str = WORKSPACE_PATH):
         self.workspace = workspace
@@ -45,14 +43,14 @@ class MultiRobotBTController:
         self.env = os.environ.copy()
     
     def setup_environment(self) -> bool:
-        """设置 ROS2 环境"""
-        print(f"\n🔧 设置工作空间：{self.workspace}")
+        
+        print(f"Setting the workspace configuration: {self.workspace}")
         
         try:
-            # 切换工作目录
+            
             os.chdir(self.workspace)
             
-            # 执行 source 命令
+            
             source_cmds = [
                 "source install/setup.bash",
                 "source ./install/setup.bash"
@@ -66,9 +64,9 @@ class MultiRobotBTController:
                     text=True
                 )
                 if result.returncode != 0:
-                    print(f"⚠️ 警告：{cmd} 执行失败")
+                    print(f"Warning: {cmd} fail to execute")
             
-            # 更新环境变量
+            # update the environment parameters
             result = subprocess.run(
                 "bash -c 'source install/setup.bash && source ./install/setup.bash && env'",
                 shell=True,
@@ -81,11 +79,11 @@ class MultiRobotBTController:
                     key, value = line.split('=', 1)
                     self.env[key] = value
             
-            print("✅ 环境设置完成")
+            print("Complete the environment settings")
             return True
             
         except Exception as e:
-            print(f"❌ 环境设置失败：{e}")
+            print(f"Failed to complete the environment settings: {e}")
             return False
     
     def launch_robot(
@@ -94,19 +92,19 @@ class MultiRobotBTController:
         tree_path: Optional[str] = None,
         tick_frequency: float = 10.0
     ) -> bool:
-        """启动单个机器人"""
+        """Start a robot"""
         
         if robot_name not in ROBOT_CONFIGS:
-            print(f"❌ 未知的机器人：{robot_name}")
+            print(f"Unknown robot: {robot_name}")
             return False
         
         config = ROBOT_CONFIGS[robot_name]
         
-        print(f"\n🤖 启动 {robot_name}")
+        print(f"Start robot {robot_name}")
         print(f"   ROS Port: {config.ros_port}")
         print(f"   Web Port: {config.web_server_port}")
         
-        # 构建启动命令
+        
         cmd = [
             "ros2", "launch", "ros_bt_py", "ros_bt_py_capability.launch.py",
             f"enable_web_interface:=True",
@@ -117,7 +115,7 @@ class MultiRobotBTController:
             f"web_server_address:={config.web_server_address}",
         ]
         
-        # 添加行为树参数
+        
         if tree_path:
             cmd.extend([
                 f"load_default_tree:=True",
@@ -126,7 +124,7 @@ class MultiRobotBTController:
                 f"default_tree_control_command:=1",  # START
             ])
         
-        print(f"   命令：{' '.join(cmd)}")
+        print(f"   Command: {' '.join(cmd)}")
         
         try:
             process = subprocess.Popen(
@@ -135,10 +133,10 @@ class MultiRobotBTController:
                 preexec_fn=os.setsid
             )
             self.processes.append(process)
-            print(f"✅ {robot_name} 启动成功")
+            print(f"Succeed to start robot {robot_name}")
             return True
         except Exception as e:
-            print(f"❌ {robot_name} 启动失败：{e}")
+            print(f"Failed to start robot {robot_name} :{e}")
             return False
     
     def launch_all_robots(
@@ -146,9 +144,9 @@ class MultiRobotBTController:
         tree_path: Optional[str] = None,
         delay: float = 2.0
     ) -> None:
-        """启动所有机器人"""
+        """Start all robots"""
         
-        print("\n🚀 批量启动所有机器人")
+        print("Starting all robots at one time")
         
         for robot_name in ROBOT_CONFIGS.keys():
             self.launch_robot(robot_name, tree_path)
@@ -156,9 +154,9 @@ class MultiRobotBTController:
             time.sleep(delay)
     
     def check_nodes(self) -> None:
-        """检查运行的节点"""
         
-        print("\n📋 检查节点状态")
+        
+        print("Checking the status of nodes...")
         print("-" * 50)
         
         result = subprocess.run(
@@ -177,14 +175,14 @@ class MultiRobotBTController:
             for node in bt_nodes:
                 print(f"   {node}")
         else:
-            print("   未找到行为树相关节点")
+            print("Could not find any BT nodes.")
         
         print("-" * 50)
     
     def check_topics(self) -> None:
-        """检查 Topic"""
         
-        print("\n📡 检查 Topic")
+        
+        print("Checking topic...")
         print("-" * 50)
         
         result = subprocess.run(
@@ -201,9 +199,9 @@ class MultiRobotBTController:
         print("-" * 50)
     
     def stop_all(self) -> None:
-        """停止所有进程"""
         
-        print("\n🛑 停止所有进程...")
+        
+        print("Stop all processes..")
         
         for process in self.processes:
             try:
@@ -212,10 +210,10 @@ class MultiRobotBTController:
                 pass
         
         self.processes.clear()
-        print("✅ 已停止所有进程")
+        print("Succeed to stop all processes.")
     
     def wait(self) -> None:
-        """等待所有进程"""
+        
         
         try:
             for process in self.processes:
@@ -226,46 +224,46 @@ class MultiRobotBTController:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="多机器人行为树控制器 (基于 jilu3 配置)"
+        description="Multi-robot BT controller"
     )
     parser.add_argument(
         "-r", "--robot",
         choices=list(ROBOT_CONFIGS.keys()),
-        help="启动指定机器人"
+        help="start a single robot"
     )
     parser.add_argument(
         "-a", "--all",
         action="store_true",
-        help="启动所有机器人"
+        help="start all robots"
     )
     parser.add_argument(
         "-t", "--tree",
         type=str,
-        help="行为树文件路径"
+        help="BT file path"
     )
     parser.add_argument(
         "-f", "--frequency",
         type=float,
         default=10.0,
-        help="行为树执行频率 (Hz)"
+        help="tick frequency of BT (Hz)"
     )
     parser.add_argument(
         "-c", "--check",
         action="store_true",
-        help="检查节点状态"
+        help="check node status"
     )
     parser.add_argument(
         "-w", "--workspace",
         type=str,
         default=WORKSPACE_PATH,
-        help="工作空间路径"
+        help="workspace path"
     )
     
     args = parser.parse_args()
     
     controller = MultiRobotBTController(workspace=args.workspace)
     
-    # 设置环境
+    
     if not controller.setup_environment():
         sys.exit(1)
     
@@ -287,14 +285,14 @@ def main():
             controller.wait()
         else:
             parser.print_help()
-            print("\n⚠️ 请指定 -r/--robot 或 -a/--all 参数")
+            print("Please choose -r/--robot or -a/--all settings")
     
     except KeyboardInterrupt:
         controller.stop_all()
-        print("\n👋 已退出")
+        print("Exited.")
     except Exception as e:
         controller.stop_all()
-        print(f"\n❌ 错误：{e}")
+        print(f"Error：{e}")
         sys.exit(1)
 
 
