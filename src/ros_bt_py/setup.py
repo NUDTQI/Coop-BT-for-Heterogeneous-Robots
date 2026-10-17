@@ -34,7 +34,7 @@ package_name = "ros_bt_py"
 
 generate_parameter_module(
     "parameters",  # python module name for parameter library
-    "config/tree_node_parameters.yaml",  # path to input yaml file  ##只能放一个文件
+    "config/tree_node_parameters.yaml",  # path to input yaml file  
 )
 
 setup(

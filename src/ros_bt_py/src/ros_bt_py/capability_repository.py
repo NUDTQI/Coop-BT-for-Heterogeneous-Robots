@@ -85,7 +85,7 @@ class CapabilityRepository():
             publisher_interface_request_globally: Publisher,
         ):
         # super().__init__("node_name")
-        self.node = node #将上一个的节点继承下来
+        self.node = node 
         # List containing all known capability interfaces.
         self.__local_capability_interface_update_publisher = (publisher_interface_updates_locally)
         self.__local_capability_implementation_update_publisher = (publisher_implementation_updates_locally)
@@ -106,7 +106,7 @@ class CapabilityRepository():
         self.__capabilities_tmp_dir = tempfile.mkdtemp(prefix="capability_backup_")
         self.test_param=self.node.declare_parameter("test_param",'111222333')
 
-        # 发布当前时间戳
+        
         try:
             time_msg = Time()
             time_msg.sec = int(self.node.get_clock().now().seconds_nanoseconds()[0])
@@ -123,7 +123,7 @@ class CapabilityRepository():
             raise ValueError("Empty package name provided!")
 
         try:
-            package = get_package_share_directory(package) # 不改的话找不到package路径：self.__rp.get_path(package)
+            package = get_package_share_directory(package) 
         except KeyError as exc:
             raise ValueError(f'Package could not be found: "{exc}"!') from exc
 
@@ -344,9 +344,9 @@ class CapabilityRepository():
             ) as capability_interface_file:
                 # msg = genpy.message.strify_message(capability[0].interface)
                 msg1 = capability[0].interface
-                # 将 ROS 2 消息对象转换为字典
+                # ROS2 msg to dict
                 msg_dict = {field: getattr(msg, field) for field in msg1.__slots__}
-                # 将字典转换为字符串
+                # dict to string
                 msg = yaml.dump(msg_dict, default_flow_style=False)
                 
                 capability_interface_file.write(msg)
@@ -361,9 +361,9 @@ class CapabilityRepository():
                 ) as capability_implementation_file:
                     # msg = genpy.message.strify_message(implementation)
                     msg1 = implementation
-                    # 将 ROS 2 消息对象转换为字典
+                    # ROS2 msg to dict
                     msg_dict = {field: getattr(msg, field) for field in msg1.__slots__}
-                    # 将字典转换为字符串
+                    # dict to string
                     msg = yaml.dump(msg_dict, default_flow_style=False)
                     capability_implementation_file.write(msg)
 
@@ -371,7 +371,7 @@ class CapabilityRepository():
         return response
     
     def load_capabilities(
-        self, request: LoadCapabilities.Request, response: LoadCapabilities.Response ##  全都change了!!!
+        self, request: LoadCapabilities.Request, response: LoadCapabilities.Response 
     ) -> LoadCapabilities.Response:
         """
         Load all capabilities from a given package.
@@ -702,7 +702,7 @@ class CapabilityRepository():
         #     response.interfaces = [v.interface for v in self.capabilities]
 
 
-        ### srv 文件中直接用了list的数据类型，可能初始化或者存取出现问题
+        
         self.capability_list = request.cap_list
         response.cap_list = request.cap_list
 

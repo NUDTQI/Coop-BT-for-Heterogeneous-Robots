@@ -86,14 +86,7 @@ class LookForHelp(Leaf):
             HashableCapabilityInterface, Dict[str, CapabilityImplementation]
         ] = {}
 
-        ## 在树中设置信息收发节点，通过msg为cap repo加载能力，并通过global函数获取全局interface验证加载是否成功
-
-
-        ##  可能1：global_capability_interfaces_callback（回收环境中所有关于能力的全局声明，并转化为hash caplist
-        ##  可能2：load capability（按照指定路径加载能力文件及其一切实现，引入yaml文件，但是是以msg的形式？）
-        ##  
-        ##  可能3：调用put_capability_implementation函数：Put a new implementation to the repository from the local node.
-           # 在node中已经建立了相应的service，但是没有给函数具体的request
+        
            #:param request: The service request.
            #:return: Success if the capability was successfully added to the repository.
            #Failure if the capability interface is unknown or the uuids are not valid.

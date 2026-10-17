@@ -70,7 +70,7 @@ class CapabilityRepositoryNode(Node):
         # Topic prefix used for the global capability interface exchange
         global_capability_topic_prefix = self.declare_parameter("global_capability_topic_prefix", "/gc").value
 
-        # Local publishers 循环更新本地能力接口    ###### change 0604
+        # Local cap interface publishers  ###### change 0604
         self.__local_capability_interface_update_publisher = self.create_publisher(
             Time, 
             "~/capabilities/interfaces",
@@ -95,7 +95,7 @@ class CapabilityRepositoryNode(Node):
                 ##### add 0701
                 callback_group=ReentrantCallbackGroup())
 
-        # Global publishers 循环发布全局能力接口需求request和内容Cap interface
+        # Global cap interface publishers (request and implementation)
         self.__global_capability_interfaces_publisher = self.create_publisher(
             CapabilityInterface, 
             f"{global_capability_topic_prefix}/interfaces", 
@@ -106,7 +106,7 @@ class CapabilityRepositoryNode(Node):
                 depth=1000),
                 ##### add 0701
                 callback_group=ReentrantCallbackGroup()
-            )#1000)  # add 0604（不确定，可删除）
+            )#1000)  
         self.__global_capability_interfaces_requests_publisher = self.create_publisher(
             Time, 
             f"{global_capability_topic_prefix}/interfaces/request", 
@@ -153,7 +153,7 @@ class CapabilityRepositoryNode(Node):
                 durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
                 history=QoSHistoryPolicy.KEEP_LAST,
                 depth=1),
-            callback_group=ReentrantCallbackGroup()   ### change 0701 不确定是否影响其他函数
+            callback_group=ReentrantCallbackGroup()   ### change 0701 
         )
         self.__local_capability_implementations_get_service = self.create_service(
             GetCapabilityImplementations,
@@ -235,7 +235,7 @@ class CapabilityRepositoryNode(Node):
 
 def main(argv=None):
     rclpy.init(args=argv)
-    node = CapabilityRepositoryNode(node_name="capability_repository")#初始化时，定义节点名
+    node = CapabilityRepositoryNode(node_name="capability_repository")
     node.get_logger().info("CapabilityRepositoryNode started.")
 
     ####### add 0604

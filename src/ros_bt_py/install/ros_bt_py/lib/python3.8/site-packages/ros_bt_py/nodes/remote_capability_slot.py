@@ -265,7 +265,7 @@ class RemoteCapabilitySlot(Node):#Node):
             self.capability_interface = req.interface #req.interface
             self.node_id = req.node_id
             self._ping_publisher.publish(
-                PingMsg(node_id=self.node_id, timestamp=self.ros_node.get_clock().now())##_ros_node还是ros_node
+                PingMsg(node_id=self.node_id, timestamp=self.ros_node.get_clock().now())
             )
 
             if self._tree_loaded_event.is_set():
@@ -346,7 +346,7 @@ class RemoteCapabilitySlot(Node):#Node):
 
     def _do_setup(self):
 
-        #以下4个topic等号右侧原来都是：rospy.resolve_name(```)
+        
         remote_tree_slot_executor_run_topic = self._ros_node.resolve_topic_name(f"{self._ros_node.get_namespace()}/mission_control/remote_capability_slot/{self.name}/run")
 
         remote_tree_slot_executor_cancel_topic = self._ros_node.resolve_topic_name(f"{self._ros_node.get_namespace()}/mission_control/remote_capability_slot/{self.name}/cancel")
@@ -356,7 +356,7 @@ class RemoteCapabilitySlot(Node):#Node):
         remote_capability_slot_status_topic = self._ros_node.resolve_topic_name(f"{self._ros_node.get_namespace()}/mission_control/remote_slot_status")
 
         self._ros_node.get_logger().warn(f"remote tree slot:{remote_tree_slot_executor_run_topic}")
-        #以下部分等号右侧原来都是：Publisher, Service，但二者对格式的要求严格，缺少了几个参数，因此调整右侧创建函数名
+        
         self._ping_publisher = self._ros_node.create_publisher(
             msg_type=PingMsg, 
             topic="~/capabilities/ping", 
@@ -395,7 +395,7 @@ class RemoteCapabilitySlot(Node):#Node):
             RemoteCapabilitySlotStatus(
                 name=self.name,
                 status=RemoteCapabilitySlotStatus.IDLE,
-                timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                timestamp=self._ros_node.get_clock().now().to_msg(),
             )
         )
         self._capability_execution_status_publisher.publish(
@@ -412,7 +412,7 @@ class RemoteCapabilitySlot(Node):#Node):
             RemoteCapabilitySlotStatus(
                 name=self.name,
                 status=RemoteCapabilitySlotStatus.IDLE,
-                timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                timestamp=self._ros_node.get_clock().now().to_msg(),
             )
         )
 
@@ -421,7 +421,7 @@ class RemoteCapabilitySlot(Node):#Node):
                 RemoteCapabilitySlotStatus(
                     name=self.name,
                     status=RemoteCapabilitySlotStatus.RUNNING,
-                    timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                    timestamp=self._ros_node.get_clock().now().to_msg(),
                 )
             )
             self._capability_execution_status_publisher.publish(
@@ -440,7 +440,7 @@ class RemoteCapabilitySlot(Node):#Node):
             RemoteCapabilitySlotStatus(
                 name=self.name,
                 status=RemoteCapabilitySlotStatus.RUNNING,
-                timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                timestamp=self._ros_node.get_clock().now().to_msg(),
             )
         )
         self._capability_execution_status_publisher.publish(
@@ -474,7 +474,7 @@ class RemoteCapabilitySlot(Node):#Node):
             RemoteCapabilitySlotStatus(
                 name=self.name,
                 status=RemoteCapabilitySlotStatus.RUNNING,
-                timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                timestamp=self._ros_node.get_clock().now().to_msg(),
             )
         )
 
@@ -501,7 +501,7 @@ class RemoteCapabilitySlot(Node):#Node):
                 RemoteCapabilitySlotStatus(
                     name=self.name,
                     status=RemoteCapabilitySlotStatus.IDLE,
-                    timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                    timestamp=self._ros_node.get_clock().now().to_msg(),
                 )
             )
             self._capability_implementation_available_event.clear()
@@ -520,7 +520,7 @@ class RemoteCapabilitySlot(Node):#Node):
         if self._ping_publisher is not None and self.node_id is not None:
             try:
                 self._ping_publisher.publish(
-                    PingMsg(node_id=self.node_id, timestamp=self._ros_node.get_clock().now().to_msg())##_ros_node还是ros_node
+                    PingMsg(node_id=self.node_id, timestamp=self._ros_node.get_clock().now().to_msg())
                 )
             except Exception as exc:
                 self.logwarn(f"Exception when publishing ping: {exc}")
@@ -553,7 +553,7 @@ class RemoteCapabilitySlot(Node):#Node):
             RemoteCapabilitySlotStatus(
                 name=self.name,
                 status=RemoteCapabilitySlotStatus.SHUTDOWN,
-                timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                timestamp=self._ros_node.get_clock().now().to_msg(),
             )
         )
 
@@ -566,10 +566,10 @@ class RemoteCapabilitySlot(Node):#Node):
                 RemoteCapabilitySlotStatus(
                     name=self.name,
                     status=RemoteCapabilitySlotStatus.SHUTDOWN,
-                    timestamp=self._ros_node.get_clock().now().to_msg(),##_ros_node还是ros_node
+                    timestamp=self._ros_node.get_clock().now().to_msg(),
                 )
             )
-        time.sleep(Duration(seconds=1)) ##是否要去掉duration
+        time.sleep(Duration(seconds=1)) 
 
         self._run_remote_capability_service.destroy()
         self._run_remote_capability_service = None

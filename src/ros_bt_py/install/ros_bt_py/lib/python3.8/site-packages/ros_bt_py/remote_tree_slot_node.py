@@ -38,7 +38,7 @@ from rclpy.service import Service
 from ros_bt_py_interfaces.msg import RemoteSlotState, RunTreeAction
 from ros_bt_py_interfaces.srv import ControlTreeExecution, EvaluateUtility
 
-from src.ros_bt_py.remote_tree_slot import RemoteTreeSlot  ##加了src
+from src.ros_bt_py.remote_tree_slot import RemoteTreeSlot  
 
 class RemoteTreeSlotNode(Node):
     def __init__(self):
@@ -90,7 +90,7 @@ class RemoteTreeSlotNode(Node):
     )
 
     # And go!
-    action_server.start()  #放在main里面还是外面？？
+    action_server.start()  
 
 #add
 def main(args=None):

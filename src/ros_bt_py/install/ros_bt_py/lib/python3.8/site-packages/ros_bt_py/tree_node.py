@@ -193,7 +193,7 @@ class TreeNode(Node):
         )
 
         self.capability_interface_subscription = self.create_subscription(
-            Time, interfaces_announcement_topic, lambda msg: capability_node_class_from_capability_interface_callback(msg, [local_mc_prefix, self.get_capability_interface_service]), 10  # 队列大小
+            Time, interfaces_announcement_topic, lambda msg: capability_node_class_from_capability_interface_callback(msg, [local_mc_prefix, self.get_capability_interface_service]), 10  
         )
     ###################### add cap interface msg
 

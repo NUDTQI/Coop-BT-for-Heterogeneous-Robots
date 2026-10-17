@@ -3,7 +3,7 @@
 # Multi-robot behavior tree automated execution script
 # Function: Launch robot -> Load YAML -> Run for 8s -> Stop -> Switch to new YAML
 
-WORKSPACE_PATH="/home/sherry/coop-bt-ws"
+WORKSPACE_PATH="" #"/home/coop-bt-ws"
 BT_CONTROLLER="${WORKSPACE_PATH}/scripts/bt_tree_automator.py"
 
 
@@ -16,8 +16,8 @@ NC='\033[0m'
 # Configuration parameters
 RUN_DURATION=8.0
 TICK_FREQUENCY=10.0
-TREE_LOAD_CAP_BASE="file:///home/sherry/下载/remote_exe/tree_load_cap_int_success"
-TREE_FINAL_BASE="file:///home/sherry/下载/coop_bt/tree(55)4" #"file:///home/sherry/下载/remote_exe/tree(64)4" #
+TREE_LOAD_CAP_BASE="file:///remote_exe/tree_load_cap_int_success"
+TREE_FINAL_BASE="file:///coop_bt/tree(55)4" #"file:///remote_exe/tree(64)4" #
 
 # Robot configuration
 declare -a ROBOTS=("turtle0" "turtle1" "turtle2" "turtle3" "turtle4") #

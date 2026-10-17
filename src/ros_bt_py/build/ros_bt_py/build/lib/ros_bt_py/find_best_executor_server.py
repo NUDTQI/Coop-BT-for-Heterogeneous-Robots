@@ -77,14 +77,14 @@ class FindBestExecutorServer(object):
             )
 
         for srv_name in self.eval_services:
-            if self._as.is_cancel_requested():#是否中断，虽然存在函数但不能正确跳转，因为是property类型？？
+            if self._as.is_cancel_requested():
                 # TODO(nberg): maybe send result with best so far?
-                self._as.canceled() ##或者像waitAPI中的函数calceled already？？
+                self._as.canceled() 
                 return
 
             #service_client = self.node.create_service(EvaluateUtility, srv_name, self.evaluate_utility)
             #Service(EvaluateUtility, srv_name, self.execute_cb)
-            #原：ServiceProxy(srv_name, EvaluateUtility)
+            #ServiceProxy(srv_name, EvaluateUtility)
 
             #self.__evaluate_utility_service: Service = self.node.create_service(
             #EvaluateUtility,

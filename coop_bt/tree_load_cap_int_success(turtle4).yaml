@@ -1,0 +1,245 @@
+name: ''
+path: ''
+root_name: MemorySequence_3
+nodes:
+  - module: ros_bt_py.nodes.sequence
+    node_class: MemorySequence
+    version: 0.1.0
+    max_children: -1
+    name: MemorySequence_3
+    child_names:
+      - MemorySequence
+      - MemorySequence_2
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.sequence
+    node_class: MemorySequence
+    version: 0.1.0
+    max_children: -1
+    name: MemorySequence
+    child_names:
+      - Constant
+      - FieldsToMessage
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Constant
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.str"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '"ros_bt_py"'
+        serialized_type: '{"py/type": "builtins.str"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.ros_nodes.message_converters
+    node_class: FieldsToMessage
+    version: 0.1.0
+    max_children: 0
+    name: FieldsToMessage
+    child_names: []
+    options:
+      - key: output_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Request"}
+        serialized_type: '{"py/type": "builtins.type"}'
+    inputs:
+      - key: package
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    outputs:
+      - key: out
+        serialized_value: 'null'
+        serialized_type: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Request"}
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.sequence
+    node_class: MemorySequence
+    version: 0.1.0
+    max_children: -1
+    name: MemorySequence_2
+    child_names:
+      - Service_name
+      - WaitForServiceInput
+      - Service
+      - MessageToFields
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Service_name
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.str"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '"/turtle4/capability_repository/capabilities/load"'
+        serialized_type: '{"py/type": "builtins.str"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.ros_nodes.service
+    node_class: WaitForServiceInput
+    version: 0.1.0
+    max_children: 0
+    name: WaitForServiceInput
+    child_names: []
+    options:
+      - key: service_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities"}
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: wait_for_service_seconds
+        serialized_value: '3.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+    inputs:
+      - key: service_name
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.ros_nodes.service
+    node_class: Service
+    version: 0.9.0
+    max_children: 0
+    name: Service
+    child_names: []
+    options:
+      - key: service_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities"}
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: request_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Request"}
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: response_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Response"}
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: service_name
+        serialized_value: '"/turtle4/capability_repository/capabilities/load"'
+        serialized_type: '{"py/type": "builtins.str"}'
+      - key: wait_for_service_seconds
+        serialized_value: '3.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+      - key: wait_for_response_seconds
+        serialized_value: '3.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+      - key: fail_if_not_available
+        serialized_value: 'true'
+        serialized_type: '{"py/type": "builtins.bool"}'
+    inputs:
+      - key: request
+        serialized_value: 'null'
+        serialized_type: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Request"}
+    outputs:
+      - key: response
+        serialized_value: 'null'
+        serialized_type: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Response"}
+    state: SHUTDOWN
+  - module: ros_bt_py.ros_nodes.message_converters
+    node_class: MessageToFields
+    version: 0.1.0
+    max_children: 0
+    name: MessageToFields
+    child_names: []
+    options:
+      - key: input_type
+        serialized_value: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Response"}
+        serialized_type: '{"py/type": "builtins.type"}'
+    inputs:
+      - key: in
+        serialized_value: 'null'
+        serialized_type: >-
+          {"py/type":
+          "ros_bt_py_interfaces.srv._load_capabilities.LoadCapabilities_Response"}
+    outputs:
+      - key: success
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.bool"}'
+      - key: error_message
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+      - key: interfaces
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.list"}'
+    state: SHUTDOWN
+data_wirings:
+  - source:
+      node_name: Constant
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: FieldsToMessage
+      data_kind: inputs
+      data_key: package
+  - source:
+      node_name: Service_name
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: WaitForServiceInput
+      data_kind: inputs
+      data_key: service_name
+  - source:
+      node_name: Service
+      data_kind: outputs
+      data_key: response
+    target:
+      node_name: MessageToFields
+      data_kind: inputs
+      data_key: in
+  - source:
+      node_name: FieldsToMessage
+      data_kind: outputs
+      data_key: out
+    target:
+      node_name: Service
+      data_kind: inputs
+      data_key: request
+tick_frequency_hz: 10
+state: EDITABLE
+public_node_data:
+  - node_name: MessageToFields
+    data_kind: outputs
+    data_key: success
+  - node_name: MessageToFields
+    data_kind: outputs
+    data_key: error_message
+  - node_name: MessageToFields
+    data_kind: outputs
+    data_key: interfaces

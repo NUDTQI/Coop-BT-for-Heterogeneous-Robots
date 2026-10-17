@@ -199,10 +199,7 @@ class LookForObject(Leaf):
         outputs={"object_color":str},
         max_children=0,
     ))
-## 检测物体的颜色，并根据颜色发布不同的任务能力需求，也就是说只放在树外，输出的是物体的颜色和位置！！！
-## 或者输出保持现状不带位置信息，如果需要位置信息自己订阅/tf的manager位置，object的位置通过订阅话题获取
-## 但是订阅话题后如何继续发布object的位置？
-## 合作的能力包括计算、监测、清除物体的功能
+
 class DetectColor(Leaf):
     """
     Gets images from the robot and looks for object using
@@ -218,7 +215,7 @@ class DetectColor(Leaf):
     @abstractmethod
     def publish_object_position(self):
         
-        ## 这里改成命名空间内的信息，在能力输出的时候带上task_center的信息，在cooper能力输入时订阅相关的话题
+        
         msg=geometry_msgs.msg.Point()
         msg.x = self.inputs["center_pose"][0]+0.3
         msg.y = self.inputs["center_pose"][1]+0.0
@@ -332,7 +329,7 @@ class DetectColor(Leaf):
         if len(keypoints) == 0:
             self.logwarn("No objects detected")
             self.outputs["object_color"]="None"#None
-            return NodeMsg.SUCCEEDED#FAILED#coop_bt用FAILED，remote用SUCCEEDED
+            return NodeMsg.SUCCEEDED#coop_bt-FAILED，remote-SUCCEEDED
             
         
         # for k in keypoints:
@@ -340,7 +337,7 @@ class DetectColor(Leaf):
         #     self.logwarn(f"Detected object at [{self.inputs["center_pose"][0]}, {self.inputs["center_pose"][1]}], object color: {self.color}")
         #     self.outputs["object_color"]=self.color
         #     self.task_center_position = self.ros_node.create_publisher(geometry_msgs.msg.Point, f"{self.ros_node.get_namespace()}/task_center_position", 10)
-        #     ## 这里改成命名空间内的信息，在能力输出的时候带上task_center的信息，在cooper能力输入时订阅相关的话题
+        #     
         #     msg=geometry_msgs.msg.Point()
         #     msg.x = self.inputs["center_pose"][0]+0.2
         #     msg.y = self.inputs["center_pose"][1]+0.0
@@ -352,7 +349,7 @@ class DetectColor(Leaf):
         self.outputs["object_color"]=self.color
         self.timer = self.ros_node.create_timer(0.2, self.publish_object_position)
         self.publish_object_position()
-        ### !!!!!! 这里少一个循环发布object位置，timer目前无法发布
+        
         return NodeMsg.SUCCEEDED
         
 

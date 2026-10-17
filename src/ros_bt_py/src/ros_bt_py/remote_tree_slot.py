@@ -43,7 +43,7 @@ from ros_bt_py_interfaces.msg import Node as NodeMsg
 from ros_bt_py.tree_manager import TreeManager, get_success, get_error_message
 
 
-class RemoteTreeSlot(object):##不确定是否要改成Node或者Leaf
+class RemoteTreeSlot(object):
     """Provides an interface for a Behavior Tree to be 'shoved' into.
 
     This encompasses the following:

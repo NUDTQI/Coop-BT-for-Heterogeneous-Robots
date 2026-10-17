@@ -1,0 +1,287 @@
+name: ''
+path: ''
+root_name: Sequence
+nodes:
+  - module: ros_bt_py.nodes.parallel
+    node_class: Parallel
+    version: 0.1.0
+    max_children: -1
+    name: Parallel
+    child_names:
+      - Sequence_2
+      - Sequence_3
+      - Sequence_4
+    options:
+      - key: needed_successes
+        serialized_value: '3'
+        serialized_type: '{"py/type": "builtins.int"}'
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.sequence
+    node_class: Sequence
+    version: 0.1.0
+    max_children: -1
+    name: Sequence_2
+    child_names:
+      - Constant
+      - MonitorCapability
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Constant
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.int"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '0'
+        serialized_type: '{"py/type": "builtins.int"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.capability
+    node_class: MonitorCapability
+    version: ''
+    max_children: 0
+    name: MonitorCapability
+    child_names: []
+    options:
+      - key: require_local_execution
+        serialized_value: 'true'
+        serialized_type: '{"py/type": "builtins.bool"}'
+      - key: execution_timeout_sec
+        serialized_value: '100.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+      - key: inputs_names_for_implementation_tags
+        serialized_value: '[]'
+        serialized_type: '{"py/type": "builtins.list"}'
+      - key: require_coop
+        serialized_value: 'false'
+        serialized_type: '{"py/type": "builtins.bool"}'
+    inputs:
+      - key: operand1
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+      - key: operand2
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    outputs:
+      - key: result
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.sequence
+    node_class: Sequence
+    version: 0.1.0
+    max_children: -1
+    name: Sequence_3
+    child_names:
+      - Constant_2
+      - RescueCapability
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Constant_2
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.int"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '1'
+        serialized_type: '{"py/type": "builtins.int"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.capability
+    node_class: RescueCapability
+    version: ''
+    max_children: 0
+    name: RescueCapability
+    child_names: []
+    options:
+      - key: require_local_execution
+        serialized_value: 'true'
+        serialized_type: '{"py/type": "builtins.bool"}'
+      - key: execution_timeout_sec
+        serialized_value: '100.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+      - key: inputs_names_for_implementation_tags
+        serialized_value: '[]'
+        serialized_type: '{"py/type": "builtins.list"}'
+      - key: require_coop
+        serialized_value: 'false'
+        serialized_type: '{"py/type": "builtins.bool"}'
+    inputs:
+      - key: operand1
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+      - key: operand2
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    outputs:
+      - key: result
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.int"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.sequence
+    node_class: Sequence
+    version: 0.1.0
+    max_children: -1
+    name: Sequence_4
+    child_names:
+      - Constant_3
+      - Constant_4
+      - RemovalCapability
+    options: []
+    inputs: []
+    outputs: []
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Constant_3
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.str"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '"start"'
+        serialized_type: '{"py/type": "builtins.str"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.nodes.constant
+    node_class: Constant
+    version: 0.1.0
+    max_children: 0
+    name: Constant_4
+    child_names: []
+    options:
+      - key: constant_type
+        serialized_value: '{"py/type": "builtins.str"}'
+        serialized_type: '{"py/type": "builtins.type"}'
+      - key: constant_value
+        serialized_value: '"/turtle3"'
+        serialized_type: '{"py/type": "builtins.str"}'
+    inputs: []
+    outputs:
+      - key: constant
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    state: SHUTDOWN
+  - module: ros_bt_py.capability
+    node_class: RemovalCapability
+    version: ''
+    max_children: 0
+    name: RemovalCapability
+    child_names: []
+    options:
+      - key: require_local_execution
+        serialized_value: 'true'
+        serialized_type: '{"py/type": "builtins.bool"}'
+      - key: execution_timeout_sec
+        serialized_value: '120.0'
+        serialized_type: '{"py/type": "builtins.float"}'
+      - key: inputs_names_for_implementation_tags
+        serialized_value: '[]'
+        serialized_type: '{"py/type": "builtins.list"}'
+      - key: require_coop
+        serialized_value: 'false'
+        serialized_type: '{"py/type": "builtins.bool"}'
+    inputs:
+      - key: manager
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+      - key: start_symbol
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.str"}'
+    outputs:
+      - key: result
+        serialized_value: 'null'
+        serialized_type: '{"py/type": "builtins.bool"}'
+    state: SHUTDOWN
+data_wirings:
+  - source:
+      node_name: Constant
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: MonitorCapability
+      data_kind: inputs
+      data_key: operand1
+  - source:
+      node_name: Constant
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: MonitorCapability
+      data_kind: inputs
+      data_key: operand2
+  - source:
+      node_name: Constant_2
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: RescueCapability
+      data_kind: inputs
+      data_key: operand1
+  - source:
+      node_name: Constant_2
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: RescueCapability
+      data_kind: inputs
+      data_key: operand2
+  - source:
+      node_name: Constant_3
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: RemovalCapability
+      data_kind: inputs
+      data_key: start_symbol
+  - source:
+      node_name: Constant_4
+      data_kind: outputs
+      data_key: constant
+    target:
+      node_name: RemovalCapability
+      data_kind: inputs
+      data_key: manager
+tick_frequency_hz: 10
+state: EDITABLE
+public_node_data:
+  - node_name: MonitorCapability
+    data_kind: outputs
+    data_key: result
+  - node_name: RescueCapability
+    data_kind: outputs
+    data_key: result
+  - node_name: RemovalCapability
+    data_kind: outputs
+    data_key: result

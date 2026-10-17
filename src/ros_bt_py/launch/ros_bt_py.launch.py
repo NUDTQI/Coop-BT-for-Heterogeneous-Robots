@@ -35,28 +35,28 @@ from launch.conditions import IfCondition
 
 
 def generate_launch_description():
-    robot_namespace_launch_arg = DeclareLaunchArgument( #开头
+    robot_namespace_launch_arg = DeclareLaunchArgument( 
         "robot_namespace",
         default_value="/",
         description="Namespace to use for the ros_bt_py library",
     )
     robot_namespace_value = LaunchConfiguration("robot_namespace")
 
-    node_modules_launch_arg = DeclareLaunchArgument( #开头（包括这两个文件夹里的文件）
+    node_modules_launch_arg = DeclareLaunchArgument( 
         "node_modules",
         default_value="['ros_bt_py.nodes','ros_bt_py.ros_nodes','ros_bt_py.capability']", ##add 
         description="Default python modules from which to load node definitions",
     )
     node_modules_value = LaunchConfiguration("node_modules")
 
-    enable_web_interface_launch_arg = DeclareLaunchArgument( #单独的web
+    enable_web_interface_launch_arg = DeclareLaunchArgument( 
         "enable_web_interface",
         default_value="False",
         description="Enable the ros_bt_py web GUI",
     )
     enable_web_interface_value = LaunchConfiguration("enable_web_interface")
 
-    show_traceback_on_exception_launch_arg = DeclareLaunchArgument( #1部分结尾
+    show_traceback_on_exception_launch_arg = DeclareLaunchArgument( 
         "show_traceback_on_exception",
         default_value="True",
         description="Show error traceback when an exception rises",
@@ -65,7 +65,7 @@ def generate_launch_description():
         "show_traceback_on_exception"
     )
 
-    diagnostics_frequency_hz_launch_arg = DeclareLaunchArgument( #以下7个都是param
+    diagnostics_frequency_hz_launch_arg = DeclareLaunchArgument( 
         "diagnostics_frequency_hz",
         default_value="10.0",
         description="Publishing frequency for diagnostics msgs.",
@@ -104,7 +104,7 @@ def generate_launch_description():
         "default_tree_tick_frequency_hz"
     )
 
-    default_tree_control_command_launch_arg = DeclareLaunchArgument( #1部分上下包
+    default_tree_control_command_launch_arg = DeclareLaunchArgument( 
         "default_tree_control_command",
         default_value="0",
         description="Command to execute per default after loading the default tree on startup!",
@@ -156,7 +156,7 @@ def generate_launch_description():
                 "/ros_bt_py_web_gui.launch.py",
             ]
         ),
-        condition=IfCondition(enable_web_interface_value), #原文件里web interface直接开放true
+        condition=IfCondition(enable_web_interface_value), 
         launch_arguments={'ros_port':ros_port_value,'ros_address':ros_address_value}.items(),
     )
 

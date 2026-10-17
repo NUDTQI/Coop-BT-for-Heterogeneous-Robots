@@ -62,7 +62,7 @@ class AssignmentManager(ABC): # (Node,ABC):     change 0701 !!!
 
     def __init__(
         self,
-        node: Node,  ##node加在哪里，是否需要输入一个ros节点用于初始化
+        node: Node,  
         #node_name: str,##add
         local_topic_prefix: str,
         global_assignment_msg_topic_prefix: str,
@@ -95,7 +95,7 @@ class AssignmentManager(ABC): # (Node,ABC):     change 0701 !!!
         #             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
         #             history=QoSHistoryPolicy.KEEP_LAST,
         #             depth=1),#10,
-        #     callback_group=ReentrantCallbackGroup()   ### change 0701 对应mission control中request cap exe
+        #     callback_group=ReentrantCallbackGroup()   ### change 0701 
         # )
 
     
@@ -148,7 +148,7 @@ class SimpleAssignmentManager(AssignmentManager):
         #add
         #locap_bid=self.node.get
         service_list = self.node.get_service_names_and_types()
-        self.local_bid_services:List[str]={}  ##改成self的属性了
+        self.local_bid_services:List[str]={}  
         for full_service_name in service_list:
             if full_service_name[1] == str("ros_bt_py_interfaces/srv/GetLocalBid"):#
                 found_service_name = full_service_name[0]
@@ -186,10 +186,10 @@ class SimpleAssignmentManager(AssignmentManager):
 
         top_bid: Tuple[str, GetLocalBid.Response] = list(
             sorted(bids.items(), key=lambda item: item[1].bid)
-        )[0] #取出出价最小的出价者的名称？
+        )[0] 
 
         #top_service_name: str = rosservice.get_service_node(top_bid[0])
-        top_service_name: str = top_bid[0]  ###不确定！！！加get_service_node是干啥的
+        top_service_name: str = top_bid[0]  
 
         top_service_response: GetLocalBid.Response = top_bid[1]
 

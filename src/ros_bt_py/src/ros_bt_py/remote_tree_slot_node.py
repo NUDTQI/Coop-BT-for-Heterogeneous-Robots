@@ -39,7 +39,7 @@ from ros_bt_py_interfaces.msg import RemoteSlotState
 from ros_bt_py_interfaces.action import RunTree
 from ros_bt_py_interfaces.srv import ControlTreeExecution, EvaluateUtility
 
-from ros_bt_py.remote_tree_slot import RemoteTreeSlot  ##加了src
+from ros_bt_py.remote_tree_slot import RemoteTreeSlot  
 from rclpy.qos import (
     QoSDurabilityPolicy,
     QoSHistoryPolicy,
@@ -88,14 +88,14 @@ class RemoteTreeSlotNode(Node):
         )
 
         self.get_logger().warn("Remote Tree Slot start part 1.")
-        self.remote_slot = RemoteTreeSlot(ros_node=self,publish_slot_state=self.slot_state_pub.publish)  #### change 0701 不确定有没有括号
+        self.remote_slot = RemoteTreeSlot(ros_node=self,publish_slot_state=self.slot_state_pub.publish)  #### change 0701 
 
     # Connect the action server's callbacks to the RemoteTreeSlot
         self.action_server = ActionServer(
         self,
         RunTree,
         "~/run_tree",
-        execute_callback=self.remote_slot.run_tree_handler,  ####### change 0701 ！！！！！不确定，没有原本对应的execute callback函数
+        execute_callback=self.remote_slot.run_tree_handler,  ####### change 0701 
         goal_callback=self.remote_slot.run_tree_handler,
         cancel_callback=self.remote_slot.cancel_run_tree_handler,
         #auto_start=False,
@@ -114,7 +114,7 @@ class RemoteTreeSlotNode(Node):
         )
 
     # And go!
-        self.action_server.execute(taken_data=None)#.start()  #放在main里面还是外面？？
+        self.action_server.execute(taken_data=None)#.start()  
 
 # change 0701
 def main(argv=None):

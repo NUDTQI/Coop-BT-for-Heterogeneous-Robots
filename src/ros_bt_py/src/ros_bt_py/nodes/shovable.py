@@ -36,12 +36,12 @@ import rclpy
 from rclpy.duration import Duration
 from rclpy.time import Time
 
-from ros_bt_py_interfaces.action import ( ##此处原本写的FindBestExecutor属于from ros_bt_py_interfaces.msg
+from ros_bt_py_interfaces.action import ( 
     #FindBestExecutorAction,
     #FindBestExecutorGoal,
     FindBestExecutor
 )
-from ros_bt_py_interfaces.action import RunTree#RunTreeAction, RunTreeGoal，同上
+from ros_bt_py_interfaces.action import RunTree#RunTreeAction, RunTreeGoal
 from ros_bt_py_interfaces.msg import UtilityBounds
 from ros_bt_py_interfaces.msg import Node as NodeMsg
 
@@ -123,7 +123,7 @@ class Shovable(Decorator):
             raise BehaviorTreeException(msg)
 
         _, incoming_conns, outgoing_conns = self.children[0].get_subtree_msg()
-        #outgoing_conns是connection，包括subscription和wiring，所以才有source.node_name
+        
 
         # These should be references to all the children with external inputs.
         #
@@ -304,7 +304,7 @@ class Shovable(Decorator):
 
         action_state = self._subtree_action_client.get_state()
         if action_state == GoalStatus.SUCCEEDED:
-            final_tree = self._subtree_action_client._get_result().final_tree  #由于是导出的goal_handle，无法确定类型，下面所有的.value之类的都没标黄
+            final_tree = self._subtree_action_client._get_result().final_tree  
             final_state = NodeMsg.BROKEN
 
             # Set and handle external outputs  #

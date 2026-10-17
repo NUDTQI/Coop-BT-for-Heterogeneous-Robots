@@ -160,7 +160,7 @@ class MissionControl():
     Additionally, it allows to exchange interface definitions with remote nodes.
     """
 
-    ##############以下所有！！srv_name！！！（也就是～/）都改过，改之前只有～，但编译提示～后面必须有/，修改集中在158-216行
+    ##############change srv_name
 
     # pylint: disable=too-many-instance-attributes
 
@@ -307,7 +307,7 @@ class MissionControl():
         """
         self._remote_capability_slot_goals: Dict[str, RemoteCapabilityGoalStatus] = {}
 
-        # 获取参数并转换为 Duration
+        
         remote_capability_slot_reservation_duration_sec = 6.0#self.node.get_parameter("remote_capability_slot_reservation_duration_sec").value
         #rospy.get_param("~remote_capability_slot_reservation_duration_sec", 5.0)
 
@@ -315,7 +315,7 @@ class MissionControl():
         # self._remote_capability_slot_reservation_duration.sec=5
         self._remote_capability_slot_reservation_duration = Duration(seconds=remote_capability_slot_reservation_duration_sec)
 
-        # 获取队列主题名称
+        
         team_join_topic = self.node.get_parameter("mission_control_join_topic").value if self.node.has_parameter("mission_control_join_topic") else "/team_join"
 
     
@@ -404,7 +404,7 @@ class MissionControl():
         if state is AsyncServiceProxy.RUNNING:
             return None
 
-        if state is AsyncServiceProxy.RESPONSE_READY:  ### change 0701 下一行
+        if state is AsyncServiceProxy.RESPONSE_READY:  ### change 0701 
             response=service_proxy.get_response()#response: RunRemoteCapabilitySlot.Response = service_proxy.get_response()
             if response.success:
                 return response
@@ -648,7 +648,7 @@ class MissionControl():
 
 
 
-        ###   change 0701   待修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        ###   change 0701   
 
         ### change 0701
         # get_local_bid_migration_manager = MigrationManager(
@@ -754,7 +754,7 @@ class MissionControl():
             best_implementation_bid,
         ) = sorted_implementation_bids[0]
         
-        ###   change 0701  待修改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        ###   change 0701  
 
 
         
@@ -779,7 +779,7 @@ class MissionControl():
                 self._remote_capability_slot_status[
                     msg.name
                 ] = RemoteCapabilitySlotStatusData(
-                    status=msg.IDLE, timestamp=self.node.get_clock().now(), reserved=False #####Clock.now()#RemoteCapabilitySlotStatus.IDLE可用，这里属于编辑器问题
+                    status=msg.IDLE, timestamp=self.node.get_clock().now(), reserved=False #####Clock.now()#RemoteCapabilitySlotStatus.IDLE
                 )
             self._remote_capability_slot_status[msg.name].status = msg.status
 
@@ -846,7 +846,7 @@ class MissionControl():
             ].reserved = True
             self._remote_capability_slot_status[
                 reserved_remote_capability_slot
-            ].timestamp = self.node.get_clock().now().to_msg() ####Clock.now()  ###change 0701 不确定是否要加to msg
+            ].timestamp = self.node.get_clock().now().to_msg() ####Clock.now()  ###change 0701 
             self._remote_capability_slot_status[
                 reserved_remote_capability_slot
             ].remote_mission_control_topic = request.remote_mission_control
@@ -864,7 +864,7 @@ class MissionControl():
     def execute_remote_capability_exec(
         self,
         #remote_slot_name: str,
-        goal_handle: ServerGoalHandle,#在 ROS2 Action 服务器中，goal_handle 是由 ActionServer 回调传入的。通常，它用于更新目标的状态或返回结果。
+        goal_handle: ServerGoalHandle,
         #goal_handle,
         #goal_id,
         #reauction_threshold: float,
@@ -1067,7 +1067,7 @@ class MissionControl():
         
 
         
-        ############### change 0701 改变了此文件包括remote cap slot文件对应的 RunRemoteCapSlot 相关的client
+        ############### change 0701 RunRemoteCapSlot client
         
         run_remote_capability_slot_service_proxy = self.node.create_client(
             RunRemoteCapabilitySlot, 
@@ -1227,7 +1227,7 @@ class MissionControl():
                         f"Failed to cancel the remote capability slot execution: {exc}"
                     )
 
-                run_remote_capability_slot_service_proxy.destroy() #stop_call()   #### change 0701 不确定!!!!!!!!!!!!!!!!!!!!!!!
+                run_remote_capability_slot_service_proxy.destroy() #stop_call()   #### change 0701 
                 goal_handle.canceled(text="Cancellation of goal requested!")
                 result=ExecuteRemoteCapability.Result(
                         success=False,
@@ -1468,7 +1468,7 @@ class MissionControl():
             assignment_system_topic = f"{self.node.get_namespace()}/assignment_manager/find_best_executor"
             self.find_best_executor_service = self.node.create_client(
                 FindBestCapabilityExecutor,
-                assignment_system_topic,   ### change 0701 待增加qos
+                assignment_system_topic,   ### change 0701 
                 qos_profile=QoSProfile(
                     reliability=QoSReliabilityPolicy.RELIABLE,
                     durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
@@ -1856,7 +1856,7 @@ class MissionControl():
             #     )
             # )
             serv_req1=AddNode.Request()
-            serv_req1.parent_name=""   ### change 0701 关键！！！！！！！！！！！！！！！！！！！不能用None！
+            serv_req1.parent_name=""   ### change 0701 
             self.node.get_logger().warn(f"9999999999999999999999 cut this3 ! ")
             serv_req1.node=root_sequence_node.to_msg()
             serv_req1.allow_rename=False
@@ -1935,8 +1935,8 @@ class MissionControl():
                 if precondition.type == Precondition.REMOTE:
                     ##### change 0701
                     available_services = f"{self.node.get_namespace()}/mission_control/check_precondition_status"#rosidl_runtime_py.utilities.get_service("CheckPreconditionStatus")
-                    # ！！！！和其他地方的get service list然后按照服务名在列表中查找不一样
-                    # 原：rosservice_find("CheckPreconditionStatus")
+                    # do not get service list and search the name
+                    # rosservice_find("CheckPreconditionStatus")
 
                     #for service_name in available_services:
                     

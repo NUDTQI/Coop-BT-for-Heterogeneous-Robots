@@ -34,13 +34,13 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 
 
-from ros_bt_py.find_best_executor_server import FindBestExecutorServer ###加了src
+from ros_bt_py.find_best_executor_server import FindBestExecutorServer 
 
 
 class FindBestExecutorServerNode(Node):
     def __init__(self):
         super().__init__('find_best_executor')
-        self.find_best_executor_service = FindBestExecutorServer(self)  ##不确定语法对不对
+        self.find_best_executor_service = FindBestExecutorServer(self)  
 
 
 

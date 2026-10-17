@@ -37,7 +37,7 @@ from launch.conditions import IfCondition
 def generate_launch_description():
     robot_namespace_launch_arg = DeclareLaunchArgument(
         "robot_namespace",
-        default_value="/tb1",  ##原来是“/”，但mission control中出现引用namespace时/连在一起的情况 
+        default_value="/tb1",  
         description="Namespace to use for the ros_bt_py library",
     )
     robot_namespace_value = LaunchConfiguration("robot_namespace")
@@ -137,14 +137,14 @@ def generate_launch_description():
                 "/launch",
                 "/ros_bt_py.launch.py",
             ]
-        ), #没有设置运行条件
+        ), 
     )
     
     capability_repository_node = Node(
-        package="ros_bt_py",  ##可能有问题，因为ros1中tree node和这些node放在同一个script里，但ros2中tree node放在内层的bt py文件夹里
+        package="ros_bt_py",  
         executable="capability_repository_node",
         namespace=robot_namespace_value,
-        #是否需要再引入用到的变量
+        
         parameters=[
             #{"local_repository_prefix":local_repository_prefix_value},
         ]

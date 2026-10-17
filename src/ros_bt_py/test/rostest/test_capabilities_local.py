@@ -43,7 +43,7 @@ except ImportError:
 import os
 import signal
 
-#import rospy  剩下的全部替换为rclpy了
+#import rospy  
 import rclpy
 from std_srvs.srv import SetBool#, SetBoolRequest, SetBoolResponse
 from ros_bt_py_interfaces.srv import (
@@ -55,8 +55,8 @@ from ros_bt_py_interfaces.srv import (
     #LoadCapabilitiesRequest,
     #LoadCapabilitiesResponse,
 )
-from ros_bt_py_interfaces.msg import Tree##加了interfaces cr.node.py--ros2_bt_py
-from ros_bt_py_interfaces.msg import Node as NodeMsg##加了interfaces
+from ros_bt_py_interfaces.msg import Tree##add interfaces cr.node.py--ros2_bt_py
+from ros_bt_py_interfaces.msg import Node as NodeMsg##add interfaces
 
 PKG = "ros_bt_py"
 

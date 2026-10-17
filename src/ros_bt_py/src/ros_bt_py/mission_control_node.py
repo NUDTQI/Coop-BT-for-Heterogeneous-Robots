@@ -69,7 +69,7 @@ class MissionControlNode(Node):
     def __init__(self):
         super().__init__('mission_control')
 
-        # 获取参数
+        
         #self.local_repository_prefix = LaunchConfiguration('local_repository_prefix')#self.get_parameter('local_repository_prefix').get_parameter_value().string_value
         #if not self.local_repository_prefix:
         self.local_repository_prefix = '/capability_repository'  #_node'  #self.get_parameters("~local_repository_prefix")#
@@ -77,7 +77,7 @@ class MissionControlNode(Node):
         
         local_mc_prefix = f"{self.get_namespace()}/mission_control"
         
-        # 服务代理
+        
         get_capability_interfaces_topic = self.resolve_topic_name(f"{self.get_namespace()}/capability_repository/capabilities/interfaces/get")
         self.get_logger().info(f"get_capability_interfaces_topic:{get_capability_interfaces_topic}")
         self.get_capability_interface_service = self.create_client(
@@ -89,13 +89,13 @@ class MissionControlNode(Node):
                 history=QoSHistoryPolicy.KEEP_LAST,
                 depth=10,
             ),
-            callback_group=ReentrantCallbackGroup())#qos_profile #=1000  # 队列大小
-        # 订阅能力接口公告
+            callback_group=ReentrantCallbackGroup())#qos_profile #=1000  
+        
         interfaces_announcement_topic = self.resolve_topic_name(f"{self.get_namespace()}/capability_repository/capabilities/interfaces")
         self.capability_interface_subscription = self.create_subscription(
             Time, 
             interfaces_announcement_topic, 
-            lambda msg: capability_node_class_from_capability_interface_callback(msg, [local_mc_prefix, self.get_capability_interface_service]), 10)  # 队列大小
+            lambda msg: capability_node_class_from_capability_interface_callback(msg, [local_mc_prefix, self.get_capability_interface_service]), 10)  
         
 
 
@@ -224,11 +224,11 @@ class MissionControlNode(Node):
         #        depth=10,
         #    )
         
-        # 初始化MissionControl
+        #init MissionControl
 
     ### change 0701 add
     #def shutdown(self):
-    #    # 任务控制器的关闭操作
+    #    
     #    self.destroy_client(self.get_capability_interface_service)
     #    self.destroy_subscription(self.capability_interface_subscription)
     def shutdown(self)->None:
@@ -239,7 +239,7 @@ class MissionControlNode(Node):
         self.__prepare_local_implementation_service.destroy()
         self.MissionControl_node.shutdown()
         
-''' 0604版, 原版在”文档“文件夹 '''
+''' 0604 '''
 def main(argv=None):
 
     rclpy.init(args=argv)

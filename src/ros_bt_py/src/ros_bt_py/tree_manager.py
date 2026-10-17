@@ -588,7 +588,7 @@ class TreeManager:
                 except Exception as pub_exc:
                     get_logger("tree_manager").error(f"Failed to publish debug info during tick: {pub_exc}")
                     get_logger("tree_manager").error(f"Stack trace: {traceback.format_exc()}")
-                    # 不抛出异常，继续执行
+                    
             #self.publish_info(self.debug_manager.get_debug_info_msg(), ticked=True)
             get_logger("tree_manager").info("789 finish")
 

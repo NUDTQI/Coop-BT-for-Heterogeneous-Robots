@@ -62,7 +62,7 @@ class AsyncServiceProxy(Node):
     WAITING = 5
     TIMEOUT = 6
     SERVICE_AVAILABLE = 7
-    class SerivceProxyInstance:##不加object，详见ros1对比
+    class SerivceProxyInstance:
         """Allocated ROS ServiceProxy that can be claimed by AsyncServiceProxies on demand."""
 
         def __init__(self, node: Node, service_name: str, service_type):
@@ -121,7 +121,7 @@ class AsyncServiceProxy(Node):
         :rtype: AsyncServiceProxy
         """
         obj = super(AsyncServiceProxy, cls).__new__(cls)
-        obj._service_proxies = cls._service_proxies#TODO(tjp):这里不确定这么该是否可以，理论上不需要这一步
+        obj._service_proxies = cls._service_proxies
         obj._singleton_lock = cls._singleton_lock
         obj._id_counter = cls._id_counter
         return obj
@@ -328,7 +328,7 @@ class AsyncServiceProxy(Node):
 
         claim_cb()
         try:
-            data["proxy"].wait_for_service(data["timeout"]) #指向的是client.wait_for_service()，由于data["proxy"]没有显示指明属于client，故编辑器无法自动索引函数
+            data["proxy"].wait_for_service(data["timeout"]) 
             if abort.is_set():
                 unclaim_cb()
                 return
@@ -384,7 +384,7 @@ class AsyncServiceProxy(Node):
         """
         claim_cb()
         try:
-            res = data["proxy"].call(data["req"]) #指向的是client.wait_for_service()，由于data["proxy"]没有显示指明属于client，故编辑器无法自动索引函数
+            res = data["proxy"].call(data["req"]) 
             if abort.is_set():
                 unclaim_cb()
                 return
@@ -443,12 +443,12 @@ def get_message_constant_fields(message_class):
             item
             for item in attributes
             if (
-                not item.startswith("_")# 排除以 _ 开头的私有属性
-                and item not in methods# 排除方法
-                and item not in msg.__slots__# 排除 slots（消息中的字段）
+                not item.startswith("_")
+                and item not in methods
+                and item not in msg.__slots__
                 and item not in attributes_message
                 and item not in numpy_methods
-                and item not in get_message_interfaces(message_class).__slots__# 排除继承自接口的 slots
+                and item not in get_message_interfaces(message_class).__slots__
             )
         ]
         return constants

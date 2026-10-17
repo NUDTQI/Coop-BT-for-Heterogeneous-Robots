@@ -74,7 +74,7 @@ from ros_bt_py.helpers import json_decode, json_encode, rgetattr
 from ros_bt_py.node import define_bt_node, Leaf, Node as Node1
 from ros_bt_py.node_data import NodeData
 from ros_bt_py.node_config import NodeConfig
-from ros_bt_py.ros_helpers import AsyncServiceProxy #这里还没有适配
+from ros_bt_py.ros_helpers import AsyncServiceProxy 
 from ros_bt_py.tree_manager import TreeManager
 
 class CapabilityDataBridge(ABC, Leaf):#(Node, ABC, Leaf):  #change 5.21
@@ -83,8 +83,8 @@ class CapabilityDataBridge(ABC, Leaf):#(Node, ABC, Leaf):  #change 5.21
     def __init__(
         self,
         #change 5.21
-        #node_name: str,#这里新增了一个node_name，用于传递ros启动时节点名，子类实例化时自动把这个值补全
-        ros_node=None, ######## change 0604, 对照ros1中IO Bridge和Node初始化的init参数对应关系
+        
+        ros_node=None, ######## change 0604
         debug_manager=None,
         name=None,
         options=None,
@@ -99,14 +99,14 @@ class CapabilityDataBridge(ABC, Leaf):#(Node, ABC, Leaf):  #change 5.21
         :param name: The name of the capability data bridge.
         :param options: The node options.
         """
-        # 涉及多个类继承问题，所以显式初始化构造函数
+        
         #Node().__init__(node_name)   #change 5.21
         
         # ABC().__init__()   ###### change 0604
         #Leaf().__init__(   ###### change 0604
         super(CapabilityDataBridge,self).__init__(
-            #ros_node=self.ros_node,    ## change 1 #self 里有ros_node    #change 5.21
-            ros_node=ros_node,  ######## change 0604, 对照ros1中IO Bridge和Node初始化的init参数对应关系
+            #ros_node=self.ros_node,    ## change 1 
+            ros_node=ros_node,  ######## change 0604
             options=options,
             debug_manager=debug_manager,
             name=name,
@@ -140,7 +140,7 @@ class CapabilityInputDataBridge(CapabilityDataBridge):
     def __init__(
         self,
         #change 5.21
-        #node_name: str,#这里新增了一个node_name，用于传递ros启动时节点名，实例化这个类时，需要将这个参数传入，这是有别于ros1的地方
+        #node_name: str,
         ros_node:Optional[Node]=None,  ######## change 0604
         options: Optional[Dict] = None,
         debug_manager: Optional[DebugManager] = None,
@@ -254,7 +254,7 @@ class CapabilityInputDataBridge(CapabilityDataBridge):
                 self._current_received_msg = None
 
             if self._source_capability_inputs_subscriber is not None:
-                self.ros_node.destroy_subscription(self._source_capability_inputs_subscriber)#ros2中订阅需要销毁，发布不需要
+                self.ros_node.destroy_subscription(self._source_capability_inputs_subscriber)
                 self._source_capability_inputs_subscriber = None
 
 #@define_bt_node(NodeConfig(options={}, inputs={}, outputs={}, max_children=0))#add
@@ -263,7 +263,7 @@ class CapabilityOutputDataBridge(CapabilityDataBridge):
     def __init__(
         self,
         #change 5.21
-        #node_name: str,#这里新增了一个node_name，用于传递ros启动时节点名，实例化这个类时，需要将这个参数传入，这是有别于ros1的地方
+        #node_name: str,
         ros_node: Optional[Node]=None,  ######## change 0604
         options: Optional[Dict] = None,
         debug_manager: Optional[DebugManager] = None,
@@ -324,7 +324,7 @@ class CapabilityOutputDataBridge(CapabilityDataBridge):
     def _do_shutdown(self):
         with self._lock:
             if self._source_capability_outputs_publisher is not None:
-                self._source_capability_outputs_publisher = None#ros2中订阅需要销毁，发布不需要，只需要给None就行
+                self._source_capability_outputs_publisher = None
 
 #@define_bt_node(NodeConfig(options={}, inputs={}, outputs={}, max_children=0))#add
 class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
@@ -348,7 +348,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         #ABC().__init__()     ###### change 0604
         #Leaf().__init__(   ###### change 0604
         super().__init__(
-            #ros_node=self.ros_node,    ## change 1 #self 里有ros_node    #change 5.21
+            #ros_node=self.ros_node,    ## change 1 
             options=options,
             debug_manager=debug_manager,
             name=name,
@@ -381,7 +381,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
 
         self.wait_for_outputs_timeout_sec:int = 1
 
-          # 检查并初始化 capability_interface
+          
         if hasattr(self, "__capability_interface"):
             self.capability_interface = getattr(self, "__capability_interface")
         else:
@@ -393,7 +393,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 "Created Capability without interface! This is not intended!"
             )
 
-        # 检查并初始化 local_mc_topic
+        
         if hasattr(self, "__local_mc_topic"):
             self.local_mc_topic = getattr(self, "__local_mc_topic")
         else:
@@ -528,7 +528,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         self.__get_local_bid_service = self.ros_node.create_client(GetLocalBid, local_bid_service_topic)
         self.__get_local_bid_service.wait_for_service()
 
-        #为了一直action新增；变量
+        
         self.execute_capability_remote_client_furture: Optional[Future] = None
         self.execute_capability_result: Optional[ExecuteRemoteCapability] = None
         self.has_execute_capability_result = False
@@ -582,7 +582,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             )
             return UtilityBounds(can_execute=False)
 
-        response: GetLocalBid.Response = future.result() #这里我把response显式告知属于GetLocalBid.Response，否则下面编译器无法识别response.bid,future.result()返回是一个字典，包括result以及status
+        response: GetLocalBid.Response = future.result() 
         return UtilityBounds(
             can_execute=True,
             has_lower_bound_success=True,
@@ -601,7 +601,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         pass
 
     @staticmethod
-    def __handle_async_service_call(service_proxy: AsyncServiceProxy):#AsyncServiceProxy还没适配
+    def __handle_async_service_call(service_proxy: AsyncServiceProxy):
         """
         Helper method to manage a call to a service via the AsyncServiceProxy.
         The call method needs to be called beforehand,
@@ -641,7 +641,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             return None
 
         if state is AsyncServiceProxy.RESPONSE_READY:
-            response: PrepareLocalImplementation.Response = service_proxy.get_response() #显式定义response，这样能识别response.success
+            response: PrepareLocalImplementation.Response = service_proxy.get_response() 
             if response.success:
                 return response
             raise BehaviorTreeException(
@@ -651,9 +651,8 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
     
     
     def _execute_action(self, future: Future):
-        # 自己重新设计函数，异步获取action结果
+        
 
-        # 当第一次进来时，需要通过下面函数等待结果，结果未出来时，不再次运行这一步
         if not self.wait_execute_capability:
             future.add_done_callback(self.execute_future_callback)
             self.wait_execute_capability = True
@@ -661,7 +660,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         if self.has_execute_capability_result:
             result = self.execute_capability_result.result
             status = self.execute_capability_result.status
-            # 重置状态量
+            
             self.wait_execute_capability = False
             self.has_execute_capability_result = False
             self.execute_capability_result = None
@@ -698,16 +697,16 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         :param msg: The received output values.
         :return: None
         """
-        # 筛选符合条件的消息
+        
         if (msg.type == CapabilityIOBridgeData.OUTPUT and msg.node_id == self._io_bridge_id):
-            # 加锁以确保线程安全
+            
             with self._capability_lock:
                 self._last_received_outputs = msg
-                self.ros_node.get_logger().info("Output data received and stored.")  # 日志记录
+                self.ros_node.get_logger().info("Output data received and stored.")  
     
     def _do_setup(self):
         try:
-            # 获取并等待 prepare_local_implementation 服务
+            
             prepare_local_implementation_name = f"{self.local_mc_topic}/prepare_local_implementation"
 
             self._prepare_local_implementation_service_proxy = self.ros_node.create_client(
@@ -720,7 +719,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             ):
                 raise TimeoutError(f"Service '{prepare_local_implementation_name}' not available")
 
-            # 获取并等待 execute_capability 服务
+            
             self._request_capability_execution_service_proxy = self.ros_node.create_client(
                 RequestCapabilityExecution, f"{self.local_mc_topic}/execute_capability"
             )
@@ -858,7 +857,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         with self._capability_lock:
             self._setup_local_implementation_tree_status = NodeMsg.RUNNING
 
-            # 调用加载树服务
+            
             load_tree_response = self.tree_manager.load_tree(
                 request=LoadTree.Request(tree=tree),
                 prefix=self.name + "_"
@@ -869,14 +868,14 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 self._setup_local_implementation_tree_status = NodeMsg.FAILED
                 return
 
-            # 设置能力 I/O 桥接 ID
+            
             set_capability_io_bridge_id(
                 tree_manager=self.tree_manager,
                 interface=self.capability_interface,
                 io_bridge_id=self._io_bridge_id,
             )
 
-            # 查找树根
+            
             try:
                 self._local_implementation_tree_root = self.tree_manager.find_root()
             except TreeTopologyError:
@@ -884,11 +883,11 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 self._setup_local_implementation_tree_status = NodeMsg.FAILED
                 return
 
-            # 初始化树根
+            
             self._local_implementation_tree_root.shutdown()
             self._local_implementation_tree_root.setup()
 
-            # 如果启用调试发布，发布子树信息
+            
             if self.debug_manager and self.debug_manager.get_publish_subtrees():
                 self.debug_manager.add_subtree_info(self.name, self.tree_manager.to_msg())
 
@@ -911,7 +910,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             ]:
                 return NodeMsg.FAILED
 
-            # 发布执行状态
+            
             self._capability_execution_status_publisher.publish(
                 CapabilityExecutionStatus(
                     interface=self.capability_interface,
@@ -921,7 +920,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             )
             return NodeMsg.RUNNING
 
-        # 调用异步服务以检查本地树的准备状态
+        
         try:
             prepare_local_implementation_response = self.__handle_async_service_call(
                 self._prepare_local_implementation_service_proxy
@@ -930,7 +929,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             self.ros_node.get_logger().error(f"Failed to receive prepared tree from mission control: {exc}")
             return NodeMsg.FAILED
 
-        # 超时处理
+        
         if prepare_local_implementation_response is None:
             if (
                 self.ros_node.get_clock().now()
@@ -941,7 +940,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 return NodeMsg.FAILED
             return NodeMsg.ASSIGNED
 
-        # 处理失败响应
+        
         if not prepare_local_implementation_response.success:
             error_msg = (
                 "Prepare local implementation request failed: "
@@ -950,7 +949,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             self.ros_node.get_logger().error(error_msg)
             raise BehaviorTreeException(error_msg)
 
-        # 创建线程以设置本地实现树
+        
         self._prepare_local_tree_thread = Thread(
             target=self._setup_local_implementation_tree,
             args=(prepare_local_implementation_response.implementation_subtree,),
@@ -964,7 +963,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         Ticks the node while remote execution is prepared.
         :return: the new status after the node was prepared.
         """
-        # 初始化 Action Client
+        
         if self._execute_capability_remote_client is None:
             action_name = f"{self._remote_mission_control_topic}/execute_remote_capability"
             self._execute_capability_remote_client = ActionClient(
@@ -972,7 +971,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             )
             self.ros_node.get_logger().debug(f"Initialized ActionClient for: {action_name}")
 
-        # 检查连接重试次数
+        
         if self._execute_capability_remote_client_connection_tries > 10:
             self._cleanup()
             raise BehaviorTreeException(
@@ -980,27 +979,27 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 " not available after trying 10 times."
             )
 
-        # 尝试连接 Action Server
+        
         if not self._execute_capability_remote_client.wait_for_server(timeout_sec=10.0):
             self._execute_capability_remote_client_connection_tries += 1
             return NodeMsg.ASSIGNED
 
-        # 发送目标到服务器
+        
         goal_msg = ExecuteRemoteCapability.Goal(
             interface=self.capability_interface,
             implementation_name=self._implementation_name,
             node_id=self._io_bridge_id,
         )
-        # 为_execute_action逻辑重构新增的变量
+        
         self.execute_capability_remote_client_furture = self._execute_capability_remote_client.send_goal_async(goal_msg)
          
         self.ros_node.get_logger().info(f"Sent goal to Action Server: {goal_msg}")
 
-        # 记录当前时间戳
+        
         with self._capability_lock:
             self._last_ping_timestamp = self.ros_node.get_clock().now()
 
-        # 发布执行状态
+        
         self._capability_execution_status_publisher.publish(
             CapabilityExecutionStatus(
                 interface=self.capability_interface,
@@ -1020,19 +1019,19 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         or nodes cannot be instantiated.
         :return: The status of the node from NodeMsg.
         """
-        # 执行能力树的 tick 操作
+        
         new_state = self._local_implementation_tree_root.tick()
 
-        # 如果启用了调试模式，发布子树信息
+        
         if self.debug_manager and self.debug_manager.get_publish_subtrees():
             self.debug_manager.add_subtree_info(self.name, self.tree_manager.to_msg())
 
-        # 根据新状态处理逻辑
+        
         if new_state in [NodeMsg.ASSIGNED, NodeMsg.UNASSIGNED]:
             return NodeMsg.RUNNING
 
         if new_state in [NodeMsg.SUCCEEDED, NodeMsg.FAILED]:
-            # 发布能力执行结果状态
+            
             
             if new_state == NodeMsg.SUCCEEDED:
                 status = CapabilityExecutionStatus.SUCCEEDED
@@ -1047,7 +1046,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                     status=status,
                 )
             )
-            # 停止能力树的执行并清理资源
+            
             self._local_implementation_tree_root.shutdown()
             self._shutdown_local_implementation_tree()
 
@@ -1059,7 +1058,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
 
         :return: The status of the node as a NodeMsg status.
         """
-        # 检查远程执行是否超时
+        
         current_time = self.ros_node.get_clock().now()
         if (current_time - self._last_ping_timestamp) > Duration(
             seconds=self.options["execution_timeout_sec"]
@@ -1074,7 +1073,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             self._cleanup()
             return NodeMsg.FAILED
 
-        # 执行远程能力并检查结果
+        
         try:
             execute_remote_implementation_result: Optional[
                 ExecuteRemoteCapability.Result
@@ -1085,11 +1084,11 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             self._cleanup()
             return NodeMsg.FAILED
 
-        # 如果结果为空，说明任务仍在运行
+        
         if execute_remote_implementation_result is None:
             return NodeMsg.RUNNING
 
-        # 检查执行结果是否成功
+        
         if not execute_remote_implementation_result.success:
             if execute_remote_implementation_result.no_executor_available:
                 self.ros_node.get_logger().error("No executor available at the moment! Try again later!")
@@ -1111,7 +1110,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         """
         new_state = NodeMsg.RUNNING
 
-        # 等待输出数据
+        
         if self._internal_state == self.WAITING_FOR_OUTPUT_VALUES:
             if self._last_received_outputs is not None:
                 for bridge_data in self._last_received_outputs.bridge_data:
@@ -1126,7 +1125,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                         continue
                 return self._result_status
 
-            # 检查是否超时
+            
             current_time = self.ros_node.get_clock().now()
             if (current_time - self._result_timestamp) > Duration(
                 seconds=self.wait_for_outputs_timeout_sec
@@ -1137,15 +1136,15 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 )
                 return self._result_status
 
-        # 执行本地能力
+        
         if self._internal_state == self.EXECUTE_LOCAL:
             new_state = self.__tick_executing_local()
 
-        # 执行远程能力
+        
         if self._internal_state == self.EXECUTE_REMOTE:
             new_state = self.__tick_executing_remote()
 
-        # 如果执行完成，切换状态并更新结果
+        
         if new_state in [NodeMsg.FAILED, NodeMsg.SUCCEEDED]:
             self._result_status = new_state
             self._internal_state = self.WAITING_FOR_OUTPUT_VALUES
@@ -1169,7 +1168,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                         node_id=self._io_bridge_id,
                         type=CapabilityIOBridgeData.INPUT,
                         bridge_data=input_data,
-                        timestamp=self.ros_node.get_clock().now().to_msg(),  # 使用 ROS 2 的时间戳
+                        timestamp=self.ros_node.get_clock().now().to_msg(),  
                     )
                 )
             # except ROSSerializationException as exc:
@@ -1181,18 +1180,18 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 self.ros_node.get_logger().error(error_msg)
                 raise BehaviorTreeException(error_msg) from exc
 
-        # 模拟运行
+        
         if self.simulate_tick:
             # self.ros_node.get_logger().debug(f"Simulating tick. {self.name} is not executing!")
             if self.succeed_always:
                 return NodeMsg.SUCCEEDED
             return NodeMsg.RUNNING
 
-        # 状态恢复
+        
         if self.state == NodeMsg.PAUSED:
             self.state = self._old_state
 
-        # 处理不同的状态
+        
         if self.state == NodeMsg.IDLE:
             self._capability_execution_status_publisher.publish(
                 CapabilityExecutionStatus(
@@ -1212,28 +1211,28 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         if self.state == NodeMsg.RUNNING:
             return self._tick_running()
 
-        # 未定义状态，返回失败
+        
         return NodeMsg.FAILED
 
     def _do_untick(self):
-        # 如果当前状态是暂停，直接返回
+        
         if self.state == NodeMsg.PAUSED:
             return NodeMsg.PAUSED
 
-        # 保存当前状态
+        
         self._old_state = self.state
 
-        # IDLE、SUCCEEDED 或 FAILED 状态直接切换为 PAUSED
+        
         if self.state in [NodeMsg.IDLE, NodeMsg.SUCCEEDED, NodeMsg.FAILED]:
             return NodeMsg.PAUSED
 
-        # 如果状态是 UNASSIGNED，重置内部状态并停止相关服务
+        
         if self.state == NodeMsg.UNASSIGNED:
             self._internal_state = self.IDLE
             if self._request_capability_execution_service_proxy is not None:
                 self._request_capability_execution_service_proxy.stop_call()
 
-        # 如果状态是 ASSIGNED，根据具体内部状态执行对应操作
+        
         if self.state == NodeMsg.ASSIGNED:
             if self._internal_state == self.EXECUTE_LOCAL:
                 if self._prepare_local_implementation_service_proxy is not None:
@@ -1245,11 +1244,11 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                         self.execute_capability_handle.cancel_goal_async()
                         self.execute_capability_handle = None
 
-        # 尝试关闭本地实现树，如果失败，返回 FAILED
+        
         if not self._shutdown_local_implementation_tree():
             return NodeMsg.FAILED
 
-        # 默认返回 PAUSED
+        
         return NodeMsg.PAUSED
 
     def _do_reset(self):
@@ -1260,7 +1259,7 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         return NodeMsg.IDLE
 
     def _do_shutdown(self):
-        # 发布节点关闭状态
+        
         if self._capability_execution_status_publisher is not None:
             self._capability_execution_status_publisher.publish(
                 CapabilityExecutionStatus(
@@ -1270,21 +1269,21 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
                 )
             )
 
-        # 关闭本地实现树
+        
         self._shutdown_local_implementation_tree()
 
-        # 注销 I/O 桥发布者和订阅者
+        
         self._unregister_io_bridge_publishers_subscribers()
 
-        # 注销心跳订阅者
+        
         if self._ping_subscriber is not None:
             self._ping_subscriber.destroy()
             self._ping_subscriber = None
 
-        # 停止异步服务客户端
+        
         self._stop_calls_action_clients_async_service_clients()
 
-        # 关闭服务代理
+        
         if self._request_capability_execution_service_proxy is not None:
             self._request_capability_execution_service_proxy.shutdown()
             self._request_capability_execution_service_proxy = None
@@ -1293,10 +1292,10 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
             self._prepare_local_implementation_service_proxy.shutdown()
             self._prepare_local_implementation_service_proxy = None
 
-        # 清理所有资源
+        
         self._cleanup()
 
-        # 设置所有资源为 None
+        
         self._io_subscriber = None
         self._io_publisher = None
         self._ping_subscriber = None
@@ -1310,12 +1309,12 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         Helper method that destroys all the I/O bridge publishers and subscribers if not None.
         :return: None
         """
-        # 销毁 I/O 订阅者
+        
         if self._io_subscriber is not None:
             self._io_subscriber.destroy()
             self._io_subscriber = None
 
-        # 销毁 I/O 发布者
+        
         if self._io_publisher is not None:
             self._io_publisher.destroy()
             self._io_publisher = None
@@ -1325,15 +1324,15 @@ class Capability(ABC, Leaf):#(Node, ABC, Leaf ):    #change 5.21
         Shuts down the running goals of action clients and async service clients in ROS 2.
         :return: None
         """
-        # 停止异步服务调用：请求能力执行服务
+        
         if self._request_capability_execution_service_proxy is not None:
             self._request_capability_execution_service_proxy.stop_call()
 
-        # 停止异步服务调用：准备本地实现服务
+        
         if self._prepare_local_implementation_service_proxy is not None:
             self._prepare_local_implementation_service_proxy.stop_call()
 
-        # 停止动作客户端的目标
+        
         if self._execute_capability_remote_client is not None:
             if self.execute_capability_handle is not None:
                 self.execute_capability_handle.cancel_goal_async()
@@ -1418,10 +1417,10 @@ def capability_node_class_from_capability_interface(
         :param mission_control_topic: The topic the local mission controller is running on.
         :return: Class definition for the capability that can be instantiated like any other node.
         """
-        # 解析输入类型
+        
         inputs_dict = {}
         for input_node_data in capability_interface.inputs:
-            inputs_dict[input_node_data.key] = json_decode(input_node_data.serialized_type)#TODO(tjp):这里需要解决
+            inputs_dict[input_node_data.key] = json_decode(input_node_data.serialized_type)
 
         outputs_dict = {}
         for output_node_data in capability_interface.outputs:
@@ -1461,13 +1460,13 @@ def capability_input_data_bridge_from_interface(
         :param capability_interface: The capability interface to create a representation for.
         :return: The class definition for a capability input bridge.
         """
-        # 解析输入类型
+        
         inputs_dict = {
-            input_node_data.key: json_decode(input_node_data.serialized_type)#TODO(tjp):这里需要解决
+            input_node_data.key: json_decode(input_node_data.serialized_type)
             for input_node_data in capability_interface.inputs
         }
 
-        # 动态创建输入桥接类
+        
         capability_input_bridge_node_class = type(
             f"{capability_interface.name}_InputDataBridge",
             (CapabilityInputDataBridge,),
@@ -1477,13 +1476,13 @@ def capability_input_data_bridge_from_interface(
             },
         )
 
-        # 配置为行为树节点
+        
         return define_bt_node(
             NodeConfig(
-                options={},  # 无额外配置选项
-                inputs={},  # 无直接节点输入
-                outputs=inputs_dict,  # 将解析的输入作为输出
-                max_children=0,  # 不支持子节点
+                options={},  
+                inputs={},  
+                outputs=inputs_dict,  
+                max_children=0,  
             )
         )(capability_input_bridge_node_class)
 
@@ -1497,13 +1496,13 @@ def capability_output_data_bridge_from_interface(
         :return: The type definition of the capability output data bridge.
         """
 
-        # 解析输出数据
+        
         outputs_dict = {
             output_node_data.key: json_decode(output_node_data.serialized_type)
             for output_node_data in capability_interface.outputs
         }
 
-        # 动态创建输出桥接类
+        
         capability_output_bridge_node_class = type(
             f"{capability_interface.name}_OutputDataBridge",
             (CapabilityOutputDataBridge,),
@@ -1513,13 +1512,13 @@ def capability_output_data_bridge_from_interface(
             },
         )
 
-        # 配置为行为树节点
+        
         return define_bt_node(
             NodeConfig(
-                options={},  # 无额外配置选项
-                inputs={},  # 此类不需要输入
-                outputs=outputs_dict,  # 将解析的输出作为节点输出
-                max_children=0,  # 不支持子节点
+                options={},  
+                inputs={},  
+                outputs=outputs_dict,  
+                max_children=0,  
             )
         )(capability_output_bridge_node_class)
 
@@ -1548,19 +1547,7 @@ def capability_node_class_from_capability_interface_callback(msg: Time, args: Li
 
     rclpy.node.get_logger('capability_node_class').info(f"Received new capability information at {msg}")
 
-    '''原版
-    service_proxy: Client = args[1]
-    response: GetCapabilityInterfaces.Response = service_proxy.call(
-        GetCapabilityInterfaces.Request()
-    )
-    if not response.success:
-        rclpy.node.get_logger('capability_node_class').warn(f"Failed to get capability interfaces: {response.error_message}!")
-    if response.success:
-        rclpy.node.get_logger('capability_node_class').warn(f"Succeed to get capability interfaces!")
-    for interface in response.interfaces:
-        capability_node_class_from_capability_interface(interface, args[0])
-        capability_input_data_bridge_from_interface(interface)
-        capability_output_data_bridge_from_interface(interface)'''
+    
     service_proxy: Client = args[1]
     #node:Node=rclpy.node.args[0]
     rclpy.node.get_logger('capability_node_class').info(f"222222222222{args[1].srv_type},{args[1].srv_name},{args[1].qos_profile}")

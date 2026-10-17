@@ -61,7 +61,7 @@ class LoadTreeNode(Node):
         else:
             self.get_logger().error(res.error_message)
 
-#在Node节点初始化的部分开启client并等待
+
 #add
 
 
@@ -91,7 +91,7 @@ def main(args=None):
     args = parser.parse_args(sys.argv()[1:])
     rclpy.init(args=args)
     node = LoadTreeNode(args._get_args.namespace, args.timeout, args.pkg, args.tree_file)
-    ###导入参数的时候，参数都是以argument的形式存在parser里的，提不出来（后面几个args.的形式是直接给的）
+    
 
     rclpy.spin(node)  
     rclpy.shutdown()

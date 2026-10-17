@@ -130,7 +130,7 @@ class MissionControl():
     Additionally, it allows to exchange interface definitions with remote nodes.
     """
 
-    ##############以下所有！！srv_name！！！（也就是～/）都改过，改之前只有～，但编译提示～后面必须有/，修改集中在158-216行
+    
 
     # pylint: disable=too-many-instance-attributes
 
@@ -231,13 +231,13 @@ class MissionControl():
         """
         self._remote_capability_slot_goals: Dict[str, RemoteCapabilityGoalStatus] = {}
 
-        # 获取参数并转换为 Duration
+        
         remote_capability_slot_reservation_duration_sec = 5.0#self.node.get_parameter("remote_capability_slot_reservation_duration_sec").value
         #rospy.get_param("~remote_capability_slot_reservation_duration_sec", 5.0)
 
         self._remote_capability_slot_reservation_duration = Duration(seconds=remote_capability_slot_reservation_duration_sec)
 
-        # 获取队列主题名称
+        
         team_join_topic = self.node.get_parameter("mission_control_join_topic").value if self.node.has_parameter("mission_control_join_topic") else "/team_join"
 
     
@@ -536,7 +536,7 @@ class MissionControl():
                 self._remote_capability_slot_status[
                     msg.name
                 ] = RemoteCapabilitySlotStatusData(
-                    status=msg.IDLE, timestamp=self.node.get_clock().now(), reserved=False #####Clock.now()#RemoteCapabilitySlotStatus.IDLE可用，这里属于编辑器问题
+                    status=msg.IDLE, timestamp=self.node.get_clock().now(), reserved=False #####Clock.now()#RemoteCapabilitySlotStatus.IDLE
                 )
             self._remote_capability_slot_status[msg.name].status = msg.status
 
@@ -615,7 +615,7 @@ class MissionControl():
     def execute_remote_capability_exec(
         self,
         remote_slot_name: str,
-        goal_handle: ServerGoalHandle,#在 ROS2 Action 服务器中，goal_handle 是由 ActionServer 回调传入的。通常，它用于更新目标的状态或返回结果。
+        goal_handle: ServerGoalHandle,
         reauction_threshold: float,
     ):
         """
@@ -1179,8 +1179,8 @@ class MissionControl():
 
                 if precondition.type == Precondition.REMOTE:
                     available_services = rosidl_runtime_py.utilities.get_service("CheckPreconditionStatus")
-                    # ！！！！和其他地方的get service list然后按照服务名在列表中查找不一样
-                    # 原：rosservice_find("CheckPreconditionStatus")
+                    
+                    # rosservice_find("CheckPreconditionStatus")
 
                     for service_name in available_services:
                         service_client = self.node.create_client(

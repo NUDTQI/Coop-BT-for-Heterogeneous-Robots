@@ -83,7 +83,7 @@ class RemoteSlot(Leaf):
         # #add
         self._service_name = str(f"{self.options['slot_namespace']}/control_slot_execution")
         self._service_client = AsyncServiceProxy(self._service_name, ControlTreeExecution)
-        # 等待服务可用
+        
         while not self._service_client.wait_for_service(timeout_sec=self.options["wait_for_service_seconds"]):
             self._ros_node.get_logger().info('Service not available, waiting again...')
 
@@ -218,7 +218,7 @@ class RemoteSlot(Leaf):
         '''
         try:
             service_type_name = self._ros_node.get_service_type(resolved_service)
-        ##不确定是否与上下程序的意思相同
+        
         try:
             service_list = self._ros_node.get_service_names_and_types()
             for full_service_name in service_list:
@@ -235,7 +235,7 @@ class RemoteSlot(Leaf):
         service_type_name = self._ros_node.get_service_type(resolved_service)
         if  service_type_name:#self._service_client.get_state == 2:                #?????
         #    service_type = get_service_class(service_type_name)
-            #if service_type == ControlTreeExecution: ##由于改变了获取service_type的方式，可能造成格式不对、等式不成立
+            #if service_type == ControlTreeExecution: 
                 self.loginfo(
                     #(
                         f"Found service {self.options['slot_namespace']}/control_slot_execution with correct type, returning "

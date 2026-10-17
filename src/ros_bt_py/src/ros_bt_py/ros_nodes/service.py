@@ -199,7 +199,7 @@ class ServiceInput(Leaf):
             if self._service_request_future.done():
                 res = self._service_request_future.result()
                 self.outputs["response"] = res
-                self.logwarn(f"Received response: {res}")  # 添加日志检查响应
+                self.logwarn(f"Received response: {res}")  
             if self._service_request_future.cancelled():
                 self.logerr("FAILED")
                 new_state = NodeMsg.FAILED

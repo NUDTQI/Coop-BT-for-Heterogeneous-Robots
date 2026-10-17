@@ -397,7 +397,7 @@ class RandomMove(Leaf):#(Action):
         self.goal_status = None
         self.help_received = False
         self.capability_request_sub = self.ros_node.create_subscription(
-            Bool, #list 和 传递次数 发送人名称
+            Bool, 
             f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move", # ask_for_help", #f"{self.ros_node.get_namespace()}/BehaviorTreeNode/capability_request",
             self.help_callback,
             qos_profile=QoSProfile(
@@ -417,7 +417,7 @@ class RandomMove(Leaf):#(Action):
             depth=10,),
             callback_group=ReentrantCallbackGroup()    ### change 0701
             )
-        ########################## 不知道什么用但关了 change 0427 ###########################
+        ##########################  change 0427 ###########################
         # self.best_cap_req_pub = self.ros_node.create_subscription(
         #     CapabilityRequest,
         #     f"{self.ros_node.get_namespace()}/BehaviorTreeNode/Coop/capability_request",
@@ -429,8 +429,8 @@ class RandomMove(Leaf):#(Action):
         #     depth=10,),
         #     callback_group=ReentrantCallbackGroup()
         #     )
-        ########################## 不知道什么用但关了 change 0427 ###########################
-        ########################## 不知道什么用但关了 change 0427 ###########################
+        
+        ########################## change 0427 ###########################
 
     def _do_tick(self):
         self.goal_status = None
@@ -583,7 +583,7 @@ class RandomMove1(Leaf):#(Action):
         self.help_received = False
         self.running_status = None
         self.capability_request_sub = self.ros_node.create_subscription(
-            Bool, #list 和 传递次数 发送人名称
+            Bool, 
             f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move", # ask_for_help", #f"{self.ros_node.get_namespace()}/BehaviorTreeNode/capability_request",
             self.help_callback,
             qos_profile=QoSProfile(
@@ -733,7 +733,7 @@ class ClearObject(Leaf):
         self.clear_object_pub.publish(msg)
 
 
-        # 调用以下服务可以删除block
+        # how to delete block
         # req = DeleteEntity.Request()
         # req.name = 'red1_block'
         # self.delete_cli.call_async(req)

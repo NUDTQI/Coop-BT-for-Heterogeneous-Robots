@@ -83,12 +83,7 @@ class TaskListInput(Leaf):
     def receive_public_task_cb(self,msg):
         if not msg.own_name =='':
 
-            ## 改成任务队列，每次取出2-3个计算前后时间差距，小于0.5s的算成同时发布的任务
-            ## 在两个任务中，先计算距离，再同时被包含的情况下计算距离大小和匹配程度，加权决定将哪个作为req msg
-
-            ## 任务队列何时清空？每次把收到任务全部取出，依次计算距离判断是否在范围内（舍弃——计算过于复杂，还是自身先更新距离计算、只接收附近几个robot的任务————要计算与全部robot距离）
-            ## （舍弃————距离内的任务再比较，减少计算量）
-
+            
             # 1# self.task_center_name = msg.own_name
             # 1# self.task_name = msg.other_name
 
@@ -159,13 +154,13 @@ class TaskListInput(Leaf):
     @abstractmethod
     def receive_peer_pose_msg_cb(self,msg):
         ns=self.peer_name.lstrip('/')
-        if msg.transforms[0].header.frame_id == f'{ns}/odom' and msg.transforms[0].child_frame_id == f'{ns}/base_footprint':#原本frame_id是没有前缀的
+        if msg.transforms[0].header.frame_id == f'{ns}/odom' and msg.transforms[0].child_frame_id == f'{ns}/base_footprint':
             self.peer_transform = msg.transforms[0]
 
     @abstractmethod
     def receive_pose_msg_cb(self,msg):
         ns=self.ros_node.get_namespace().lstrip('/')
-        if msg.transforms[0].header.frame_id == f'{ns}/odom' and msg.transforms[0].child_frame_id == f'{ns}/base_footprint':#原本frame_id是没有前缀的
+        if msg.transforms[0].header.frame_id == f'{ns}/odom' and msg.transforms[0].child_frame_id == f'{ns}/base_footprint':
             self.transform = msg.transforms[0]
 
 
@@ -215,7 +210,7 @@ class TaskListInput(Leaf):
                     time.sleep(0.1)
                     time_sum+=0.1
                     if(time_sum>5):
-                        dist = 5 #原来是6
+                        dist = 5 
                         break
 
                 self.ros_node.get_logger().warn(f"Distance measure test 2")
@@ -232,8 +227,8 @@ class TaskListInput(Leaf):
                     dist = math.hypot(dx, dy)
                     self.ros_node.get_logger().warn(f"Distance between robot {task_center_name} and {self.ros_node.get_namespace()}: {dist}")
 
-                if dist <= 4.2: # 2.1   ### add 0311   ## 原来是7
-            # 发布通信消息（示例）
+                if dist <= 4.2: # 2.1   ### add 0311  
+            
                     return dist
                 else:
                     return 10.0
@@ -244,7 +239,7 @@ class TaskListInput(Leaf):
     
     def _do_setup(self):    
         
-        ### task以color+manager的形式分别发送，如果本身接收到manager不是自身的任务，接换成topic publisher发送与manager之间的距离
+        
         
         self.receive_task_number = 0
         self.public_task_sub = self.ros_node.create_subscription(
@@ -282,7 +277,7 @@ class TaskListInput(Leaf):
         with open(self.options["file_path"]) as f:
             self.tasks = yaml.load(f, Loader=yaml.FullLoader)
         self.origional_req_pub = self.ros_node.create_publisher(
-                CapabilityRequest, #list 和 传递次数 发送人名称
+                CapabilityRequest, 
                 f"{self.ros_node.get_namespace()}/BehaviorTreeNode/origional_capability_request",
                 qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -328,14 +323,14 @@ class TaskListInput(Leaf):
 
         self.__stop_move_pub = self.ros_node.create_publisher(
             Bool,
-            f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move",   ### 不确定！！！！！ new manager还是manager
+            f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move",   
             qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
                 durability=QoSDurabilityPolicy.VOLATILE,
                 history=QoSHistoryPolicy.KEEP_LAST,
                 depth=10,),
             callback_group=ReentrantCallbackGroup()    ### change 0701
-        )### 改了发停止信息的位置，效果待修改，原来是ask for help停下，才能进入input的判断过程
+        )
 
         if not self.ros_node.has_parameter("msg_num_count"):
             self.ros_node.declare_parameter("msg_num_count",0)
@@ -356,7 +351,7 @@ class TaskListInput(Leaf):
         #     self.ros_node.undeclare_parameter("origional_task_req")
 
         #     try:
-        #         self.outputs["origional_cap_req"]=self.tasks[self.task_name]  ### list格式，还没有转换成CapReq格式
+        #         self.outputs["origional_cap_req"]=self.tasks[self.task_name]  
         #         self.origional_req = CapList(cap_list=self.outputs["origional_cap_req"])
         #         self.origional_req_pub.publish(CapabilityRequest(cap_req_list=[self.origional_req],manager=self.ros_node.get_namespace(),depth=0))
         #     except Exception as exc:
@@ -387,22 +382,17 @@ class TaskListInput(Leaf):
         while self.receive_task_center == []:
             time.sleep(0.1)
             return NodeMsg.ASSIGNED
-        # 收到的任务列表，包括不同的任务名称而非具体的协助请求
-        # 任务列表一直在变，而且可能有已经被响应的合作任务，如何处理多余信息————接收到任务信息之后就直接订阅处理了，具体是否要接收协助由中心决定，等待时间也需要修改
-        # 清空的过程中是否会错漏数据————不会错漏，智能体恢复需要反应时间，请求订阅一直保留，选择执行的是最先到来的请求
-        # 如何进行循环，如果按照任务分别进行判断，积攒的任务请求如何处理————放在public_task_cb里，来一个任务信息开一个，tick部分只循环协助请求列表的判断
+        
         while self.task_center_name == None and (sum < self.receive_task_number or sum == self.receive_task_number):  #):  ###  delete 0310 #############
             #self.ros_node.get_logger().warn(f"sum:{sum}, receive_task_number:{self.receive_task_number}")
+            # rule 1
             if sum < self.receive_task_number or sum == self.receive_task_number:
                 for v in self.receive_task_list:
                     #self.ros_node.get_logger().warn(f"number {sum} cap list {self.cap_req_cap} task number {self.receive_task_number}")
             
                     if sum < self.receive_task_number:
                         self.ros_node.get_logger().warn(f"number {sum} task:{v}-{self.receive_task_center[sum]}")
-        #     # 原则1：按照任务顺序依次订阅任务中心
-        #     # 判断距离
-
-        #     # 这一段挪到收到任务信息的cb里了
+        
         #     self.ros_node.create_subscription(
         #         CapabilityRequest,
         #         f"{self.receive_task_center[sum]}/BehaviorTreeNode/capability_request",
@@ -416,7 +406,7 @@ class TaskListInput(Leaf):
         #     )
 
             
-            # 原则2：在没有收到其他任务协助请求的情况下，如果有自己的任务直接进入自身任务招募执行
+            # rule 2
                     if sum < self.receive_task_number and self.cap_req_cap == []:
                         if self.receive_task_center[sum] == self.ros_node.get_namespace():
                             self.task_name = self.receive_task_list[sum]# v
@@ -425,9 +415,7 @@ class TaskListInput(Leaf):
                             self.outputs["best_req_msg"] = CapabilityRequest()
                             break
 
-        # 新增！
-        # while self.cap_req_cap == []:
-            # 原则3：等待其他任务中心发布需求，进入协作执行阶段（可能出现并行）
+            # rule 3
                     elif not self.cap_req_cap == []:
                         num = 0
                         self.first_exe_symbol = False
@@ -440,17 +428,16 @@ class TaskListInput(Leaf):
                             self.distance_measure_result = self.distance_measure_cb(self.cap_req_center[num])
                             self.ros_node.get_logger().warn(f"Distance Calculation result for cap req{num} :{self.distance_measure_result} !")
                             self.ros_node.get_logger().warn(f"new req time:{self.cap_req_time[num]}")
-                            # 记录第一个可执行协作
+                            # record the first cooperation
                             if num < len(self.cap_req_cap) and self.first_exe_symbol == False:
-                                # 自己的直接去执行
-                                # 只可能出现两种情况，1.在订阅当前所收到的所有任务过程中，收到自身可执行的任务  2.
+                                
                                 if sum < self.receive_task_number and self.receive_task_center[sum]==self.ros_node.get_namespace():#self.cap_req_center[num]==self.ros_node.get_namespace():
                                     self.task_name =self.receive_task_list[sum]# v#self.cap_req_list = n
                                     self.task_center_name = self.ros_node.get_namespace()
                                     self.outputs["best_req_msg"] = CapabilityRequest()
                                     break
-                                # 别人的稍等判断一下是否有并行请求
-                                elif self.distance_measure_result<4.2 or self.distance_measure_result==4.2:  ## 原来是6.5
+                                # waiting for check if there is a parallel request
+                                elif self.distance_measure_result<4.2 or self.distance_measure_result==4.2:  ## max distance
                                     self.ros_node.get_logger().warn(f"First time find task to exe !")
                                     self.msg_number = self.msg_number+1
                                     self.ros_node.get_logger().warn(f"msg num count +1, req count +1")
@@ -467,12 +454,12 @@ class TaskListInput(Leaf):
                                     num = num + 1
                                 else:
                                     num = num + 1
-                            # 出现并行的协作请求
+                            # if there are parallel requests
                             elif self.cap_req_time[num].sec == self.first_exe_time.sec and self.cap_req_time[num].nanosec -self.first_exe_time.nanosec < 500000000:
                                 self.__stop_move_pub.publish(Bool(data=True))
                                 ### change 1111
 
-                                # 其中有自己的任务，直接执行自己的任务
+                                # first choose own request
                                 if self.cap_req_center[num] == self.ros_node.get_namespace():
                                     self.cap_req_list = n
                                     self.task_center_name = self.ros_node.get_namespace()
@@ -480,7 +467,7 @@ class TaskListInput(Leaf):
                                     self.first_exe_symbol = False
                                     self.outputs["best_req_msg"] = CapabilityRequest()
                                     break
-                                # 有并行的其他协作请求，找到与第一个请求并行的所有请求，比较距离和匹配程度，更新最佳可执行协作（按距离）
+                                # find the best cooperation
                                 else:
                                     self.msg_number = self.msg_number+1
                                     self.ros_node.get_logger().warn(f"Find parallel cap req, distance:{self.distance_measure_result},nearest distance:{self.nearest_distance}")
@@ -489,7 +476,7 @@ class TaskListInput(Leaf):
                                         self.nearest_distance = self.distance_measure_result
                                         self.first_exe_time = self.cap_req_time[num]
                                     num = num + 1 
-                            # 可执行已记录完毕，并行协作请求处理完毕
+                            # finish the request check
                             else:
                                 if num == len(self.cap_req_cap) and self.task_name == None:
                                     self.cap_req_cap = []
@@ -587,7 +574,7 @@ class TaskListInput(Leaf):
             self.ros_node.undeclare_parameter("origional_task_req")
 
             try:
-                self.outputs["origional_cap_req"]=self.tasks[self.task_name]  ### list格式，还没有转换成CapReq格式
+                self.outputs["origional_cap_req"]=self.tasks[self.task_name]  ### list
                 self.origional_req = CapList(cap_list=self.outputs["origional_cap_req"])
                 self.origional_req_pub.publish(CapabilityRequest(cap_req_list=[self.origional_req],manager=self.ros_node.get_namespace(),depth=0))
             except Exception as exc:
@@ -659,7 +646,7 @@ class TaskListInput(Leaf):
             #     self.ros_node.get_logger().warn(f"Distance between robot {self.task_center_name} and {self.ros_node.get_namespace()}: {dist}")
 
             #     if dist <= 2.5:
-            # # 发布通信消息（示例）
+            # # 
 
 
 
@@ -668,7 +655,7 @@ class TaskListInput(Leaf):
 
                     self.distance_measure = self.ros_node.create_publisher(
                     DistanceCalculation,
-                    f"{self.ros_node.get_namespace()}/assignment_manager/calculate_distance",  ## 待修改 {self.task_center_name}
+                    f"{self.ros_node.get_namespace()}/assignment_manager/calculate_distance",  ## {self.task_center_name}
                     qos_profile=QoSProfile(
                     reliability=QoSReliabilityPolicy.RELIABLE,
                     durability=QoSDurabilityPolicy.VOLATILE,
@@ -684,10 +671,6 @@ class TaskListInput(Leaf):
                     self.best_cap_req_pub.publish(CapabilityRequest(cap_req_list=[self.cap_req_list],depth=self.cap_depth,manager=self.task_center_name))
                 
                 
-                
-                
-                
-                ## 待修改
                     return NodeMsg.SUCCEEDED
                 # else:
                 #     return NodeMsg.FAILED
@@ -749,7 +732,7 @@ class GetTaskList(Leaf):
         with open(self.options["file_path"]) as f:
             self.tasks = yaml.load(f, Loader=yaml.FullLoader)
         # self.origional_req_pub = self.ros_node.create_publisher(
-        #         CapabilityRequest, #list 和 传递次数 发送人名称
+        #         CapabilityRequest, 
         #         f"{self.ros_node.get_namespace()}/BehaviorTreeNode/origional_capability_request",
         #         qos_profile=QoSProfile(
         #         reliability=QoSReliabilityPolicy.RELIABLE,
@@ -766,7 +749,7 @@ class GetTaskList(Leaf):
         self.outputs["origional_cap_req"] = None
 
         try:
-            self.outputs["origional_cap_req"]=self.tasks[self.inputs["target_color"]]  ### list格式，还没有转换成CapReq格式
+            self.outputs["origional_cap_req"]=self.tasks[self.inputs["target_color"]]  ### list
             self.origional_req = CapList(cap_list=self.outputs["origional_cap_req"])
             self.origional_req_pub.publish(CapabilityRequest(cap_req_list=[self.origional_req],manager=self.ros_node.get_namespace(),depth=0))
         except Exception as exc:
@@ -928,12 +911,12 @@ class CheckAssignedSymbol(Leaf):
             self.ros_node.get_logger().warn(f"receive manager {self.other_name} msg!")
 
 
-    # 用不上了
+    
     # def capability_request_cb(self,msg):
     #     if msg is not None:
     #         self.depth = msg.depth
     #         self.cap_req = msg.cap_req_list
-    #         ########################################## 注意
+    #         ########################################## 
     #         self.cap_req = self.cap_req[0]
     #         self.ros_node.get_logger().warn(f"receive cap req msg!")
 
@@ -965,7 +948,7 @@ class CheckAssignedSymbol(Leaf):
     def _do_tick(self):     
         """Output the value of a symbol"""
         ###########################################################
-        #进入的条件要改，需要接收到req之后才能进入assigned
+        #after receive the req it can change the status to assigned
         ###########################################################
 
         wait_time_sum = 0
@@ -979,7 +962,7 @@ class CheckAssignedSymbol(Leaf):
                 return NodeMsg.RUNNING
         
 
-        # 用不上了
+        
         # self.receive_cap_req_sub = self.ros_node.create_subscription(
         #     CapabilityRequest,
         #     f"{self.other_name}/BehaviorTreeNode/capability_request",
@@ -991,7 +974,7 @@ class CheckAssignedSymbol(Leaf):
         #         depth=10,),
         #     callback_group=ReentrantCallbackGroup()    ### change 0701
         # )
-        ####### 怎么开启多个订阅，且只当第一个msg receive的时候接受信息并停止其他接收
+        ####### 
         # while self.other_name is None:
         #     time.sleep(0.5)
         #     self.ros_node.get_logger().warn("wait for req msg!")
@@ -1009,7 +992,7 @@ class CheckAssignedSymbol(Leaf):
         #     self.param2 = None
         self.param2 = self.ros_node.get_parameter("origional_task_req").value
         self.param1 = self.ros_node.get_parameter("assigned_symbol")
-        #【1】两种开启方式，一种获取距离位置信息，一种获取task list的原始cap req
+        #two way to start: 1.get the distance msg; 2.gety the task list and cap req
         if not self.param2==0:
             set_param = self.ros_node.set_parameters([Parameter('assigned_symbol',Parameter.Type.BOOL,True)])
             self.assigned_symbol = True
@@ -1022,14 +1005,14 @@ class CheckAssignedSymbol(Leaf):
             
         self.outputs["symbol_value"]=self.assigned_symbol
         
-        if self.outputs["symbol_value"]: # is not None:  ### 同RUNNING一起修改
+        if self.outputs["symbol_value"]: # is not None:  
             #self.own_name == self.ros_node.get_namespace():
-            ##################################### 可以改进一下，原来的判断条件也很好
+            #####################################
             return NodeMsg.SUCCEEDED
         else:
             return NodeMsg.RUNNING # FAILED        
         ##########################################################################
-        ### 需要有一个running状态，此处改为running？
+        
         ##########################################################################                                       
 
     def _do_shutdown(self):
@@ -1062,24 +1045,21 @@ class CalculateCapMatch(Leaf):
         # number = 0
         # if msg is not None:
         #     for numbers in msg.cap_list:
-        #         ### 迭代形成矩阵
+        #         ### to matrix
         #         number = number+1
         # self.ros_node.get_logger().info("Update assigned symbol!")
         if msg is not None:
             self.depth = msg.depth + 1
             self.cap_req = msg.cap_req_list
-            ########################################## 注意
+            ########################################## 
             self.cap_req = self.cap_req[0].cap_list
             self.ros_node.get_logger().warn(f"receive cap req msg!")
 
     def _do_setup(self):    
         
         self.manager = self.inputs["manager_name"]
-        #if self.manager is not None:
-        #### 当input获取放在do_setup中时，获取到的input是空值，不能正确获取manager信息进入下面的选择
         
 
-        
         
         
     def _do_tick(self):     
@@ -1087,13 +1067,13 @@ class CalculateCapMatch(Leaf):
 
         self.manager = self.inputs["manager_name"]
         self.depth = None
-        #if self.manager is not None:                ########################## 不确定
+        #if self.manager is not None:                
         if not self.manager == self.ros_node.get_namespace():
 
 
-            ## 在任务筛选之前负责接受任务请求信息的
+            
             # self.capability_request_sub = self.ros_node.create_subscription(
-            #     CapabilityRequest, #list 和 传递次数 发送人名称
+            #     CapabilityRequest, 
             #     f"{self.manager}/BehaviorTreeNode/Coop/capability_request",#f"{self.ros_node.get_namespace()}/BehaviorTreeNode/capability_request",
             #     self.capability_request_cb,
             #     qos_profile=QoSProfile(
@@ -1111,9 +1091,9 @@ class CalculateCapMatch(Leaf):
             while self.depth is None:
                 time.sleep(0.1)
                 self.ros_node.get_logger().warn("wait for req msg!")
-        else:   ########################## 不确定
+        else:   
             self.capability_request_sub = self.ros_node.create_subscription(
-                CapabilityRequest, #list 和 传递次数 发送人名称
+                CapabilityRequest, 
                 f"{self.ros_node.get_namespace()}/BehaviorTreeNode/origional_capability_request",#f"{self.ros_node.get_namespace()}/BehaviorTreeNode/capability_request",
                 self.capability_request_cb,
                 qos_profile=QoSProfile(
@@ -1136,9 +1116,9 @@ class CalculateCapMatch(Leaf):
         self.own_cap_list = self.inputs["own_cap_list"]
         self.sum: int = 0
         self.sum_v:int = 0
-        self.new_req:list=[0,0,0]    ### 注意修改
+        self.new_req:list=[0,0,0]    
         self.record:list = []
-        #self.cap_record = {}  #list形式传到feedback部分再整合
+        #self.cap_record = {}  #list
         if self.depth == 0:
             self.center_symbol = self.ros_node.declare_parameter("center_symbol", True)
         else:
@@ -1151,14 +1131,14 @@ class CalculateCapMatch(Leaf):
                 self.sum = self.sum+0
                 self.new_req[v]=self.cap_req[v]
                
-                ## record更新-nsp+能力名称
+                ## record update-nsp+cap name
             if self.own_cap_list[v]*self.cap_req[v]>0:
                 self.sum = self.sum+1
                 self.new_req[v]=self.cap_req[v]-self.own_cap_list[v]
-                self.record.append(v+1)  ### 能力序号列表
+                self.record.append(v+1)  ### cap list number
                 
             self.sum_v=self.sum_v+self.new_req[v]
-        #self.cap_record.pop(self.ros_node.get_namespace(),self.record)## record更新-nsp+能力名称
+        #self.cap_record.pop(self.ros_node.get_namespace(),self.record)## record update-nsp+cap name
 
 
 
@@ -1226,7 +1206,7 @@ class CheckReceivedSymbol(Leaf):
 
 
     def received_symbol_cb(self,msg):
-        #if not msg.depth == 0:   ###########################depth=0应该不会自身循环调用
+        #if not msg.depth == 0:   ###########################depth=0
             self.feedback_msg = msg
             self.ros_node.get_logger().warn(f"feedback msg:{self.feedback_msg}")
 
@@ -1280,7 +1260,7 @@ class CheckReceivedSymbol(Leaf):
                     self.feedback_msg = CapabilityFeedback(
                     cap_list_record=[],
                     cap_owner_record=[],
-                    manager_name=self.inputs["manager"], # ros_node.get_namespace(),   ################## 不确定
+                    manager_name=self.inputs["manager"], # ros_node.get_namespace(),   
                     depth=self.inputs["depth"])
                 break
             else:
@@ -1304,9 +1284,9 @@ class CheckReceivedSymbol(Leaf):
             self.outputs["feedback_msg"] = CapabilityFeedback(
                 cap_list_record=self.feedback_msg.cap_list_record,
                 cap_owner_record=self.feedback_msg.cap_owner_record,
-                manager_name=self.inputs["manager"], # self.ros_node.get_namespace(),    ################## 不确定
+                manager_name=self.inputs["manager"], # self.ros_node.get_namespace(),    
                 depth=self.inputs["depth"])
-        #self.__capability_list_feedback_sub.destroy() ########## 不确定
+        #self.__capability_list_feedback_sub.destroy() 
         if self.received_symbol:
             return NodeMsg.SUCCEEDED
         else:
@@ -1384,7 +1364,7 @@ class CapabilityListRecord(Leaf):
         self.new_cap_list_record = self.cap_list_record
         self.cap_owner_record.append(self.ros_node.get_namespace())
         self.new_cap_owner_record = self.cap_owner_record
-        if self.depth > 0 : # and self.manager_name == self.ros_node.get_namespace():   ################## 不确定  
+        if self.depth > 0 : # and self.manager_name == self.ros_node.get_namespace():    
             self.__capability_list_feedback_pub.publish(
                 CapabilityFeedback(
                     cap_list_record=self.new_cap_list_record,
@@ -1392,11 +1372,11 @@ class CapabilityListRecord(Leaf):
                     manager_name=self.new_manager_name,
                     depth=self.depth-1))
             self.ros_node.get_logger().info(f"Pass New Cap Feedback for {self.new_cap_owner_record} : {self.new_cap_list_record}! Feedback msg num: 1")
-            self.outputs["team_list"] = self.new_cap_owner_record # []  ################## 不确定 
+            self.outputs["team_list"] = self.new_cap_owner_record # []  
             self.msg_number = self.ros_node.get_parameter("msg_num_count").value
             self.ros_node.get_logger().info(f"Pass Feedback msg num: {self.msg_number}")
             self.ros_node.set_parameters([Parameter("msg_num_count",Parameter.Type.INTEGER,1+self.msg_number)])
-            ### add 0311 不加的话new_cap_list_record中的元素都是CapList信息的格式，无法在GetCapList节点中测量其长度
+            ### add 0311 
             self.cap_list=[]
             for n in self.new_cap_list_record:
                 self.cap_list.append(n.cap_list.tolist())
@@ -1405,11 +1385,11 @@ class CapabilityListRecord(Leaf):
             self.outputs["team_cap_list"]=self.cap_list#self.new_cap_list_record
         else:
             if self.ros_node.get_parameter("center_symbol").value == True and self.new_manager_name == self.ros_node.get_namespace():
-                ### 是否是new_manager_name不确定
+                
                 self.team_list: list=[]
                 # for v in self.cap_list_record:
                 #     self.team_list.append(v.key)
-                ####################################################### 不确定
+                ############################################
                 self.team_list = self.new_cap_owner_record
                  
                 self.ros_node.get_logger().warn(f"team member record: {self.team_list} ; team cap record: {self.new_cap_list_record}")
@@ -1425,7 +1405,7 @@ class CapabilityListRecord(Leaf):
                 #self.__team_join_pub.publish(JoinTeam(center_name=self.ros_node.get_namespace(),member_list=self.team_list, depth=0))
         #self.outputs["symbol_value"]=self.symbol_param
 
-        #self.__capability_list_feedback_pub.destroy()########## 不确定
+        #self.__capability_list_feedback_pub.destroy()
         if self.new_cap_list_record is not None:
             return NodeMsg.SUCCEEDED
         else:
@@ -1473,7 +1453,7 @@ class JoinTeamReceiver(Leaf):
         #if self.depth >0:
         self.__join_team_pub = self.ros_node.create_publisher(
             JoinTeam,
-            f"{self.ros_node.get_namespace()}/BehaviorTreeNode/join_team",   ### 不确定！！！！！ new manager还是manager
+            f"{self.ros_node.get_namespace()}/BehaviorTreeNode/join_team",   
             qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
                 durability=QoSDurabilityPolicy.VOLATILE,
@@ -1483,7 +1463,7 @@ class JoinTeamReceiver(Leaf):
         )
         # self.__stop_move_pub = self.ros_node.create_publisher(
         #     Bool,
-        #     f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move",   ### 不确定！！！！！ new manager还是manager
+        #     f"{self.ros_node.get_namespace()}/BehaviorTreeNode/stop_move",   
         #     qos_profile=QoSProfile(
         #         reliability=QoSReliabilityPolicy.RELIABLE,
         #         durability=QoSDurabilityPolicy.VOLATILE,
@@ -1506,7 +1486,7 @@ class JoinTeamReceiver(Leaf):
 
         self.__join_team_sub = self.ros_node.create_subscription(
             JoinTeam,
-            f"{self.manager_name}/BehaviorTreeNode/join_team",   ### 不确定！！！！！ new manager还是manager
+            f"{self.manager_name}/BehaviorTreeNode/join_team",   
             self.receive_join_team_msg,
             qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -1555,7 +1535,7 @@ class JoinTeamReceiver(Leaf):
                     self.pre_msg_num = self.ros_node.get_parameter("msg_num_count").value
                     self.ros_node.set_parameters([Parameter("msg_num_count",Parameter.Type.INTEGER,self.msg_number+self.pre_msg_num)])
 
-                    #self.__join_team_pub.destroy()########## 不确定
+                    #self.__join_team_pub.destroy()
                     return NodeMsg.SUCCEEDED
             self.outputs["symbol_value"]=False
             return NodeMsg.FAILED
@@ -1595,18 +1575,15 @@ class GetDistance(Leaf):##Leaf？
         self.distance_limit = self.options["distance_limit"]
         self.peer_name = self.inputs["task_center_name"]
 
-        # 订阅对方位置
+        
         self.ros_node.create_subscription(
             PoseStamped, f'/{self.peer_name}/tf', self.peer_pose_cb, 10)
 
-        # 订阅自己位置（也可用 tf，这里简单处理）
+        
         self.ros_node.create_subscription(
             PoseStamped, f'/{self.ros_node.get_namespace()}/tf', self.own_pose_cb, 10)
         
-        # 订阅对方位置
         
-
-        # 通信话题（距离内才发布）
         self.in_range = self.ros_node.create_publisher(Bool, f'/{self.ros_node.get_namespace()}/to_{self.peer_name}', 10)
 
         self.own_pos = None
@@ -1629,20 +1606,20 @@ class GetDistance(Leaf):##Leaf？
 
         try:
             transform = Buffer.lookup_transform(#tf_buffer.lookup_transform(
-            'map',          # 参考坐标系
-            'base_link',    # 机器人本体坐标系
-            self.ros_node.get_clock().now()#time.Time()  # 获取最新变换
+            'map',          
+            'base_link',    
+            self.ros_node.get_clock().now()#time.Time() 
         )
     
-    # 机器人在地图中的位置
+    
             x = transform.transform.translation.x
             y = transform.transform.translation.y
             z = transform.transform.translation.z
     
-            print(f"机器人位置: x={x:.2f}, y={y:.2f}, z={z:.2f}")
+            print(f"Robot position: x={x:.2f}, y={y:.2f}, z={z:.2f}")
     
         except Exception as e:
-            print(f"无法获取变换: {e}")
+            print(f"Could not get the transform: {e}")
 
 
 
@@ -1656,13 +1633,13 @@ class GetDistance(Leaf):##Leaf？
         dist = math.hypot(dx, dy)
 
         if dist <= self.distance_limit:
-            # 发布通信消息（示例）
+            
             msg = Bool()
             msg.data = f'Hello from {self.ros_node.get_namespace()}'
             self.in_range.publish(msg)
-            self.ros_node.get_logger().info(f'距离 {dist:.2f} m, 通信开启')
+            self.ros_node.get_logger().info(f'Distance {dist:.2f} m, start to communicate')
         else:
-            self.ros_node.get_logger().info(f'距离 {dist:.2f} m, 通信断开')
+            self.ros_node.get_logger().info(f'Distance {dist:.2f} m, fail to communicate')
         
         #self.input["get_msg"]=NodeData.set_updated("get_msg")
         
@@ -1739,42 +1716,18 @@ class DistanceTest(Leaf):
         self.transform = None
         
         
-    
-
-        
         
     def _do_tick(self):     
         """Output the value of a symbol"""
-        
         x=0
-        # self.ros_node.get_logger().info(f"start tf node 1 ...")
-        # self.buffer = Buffer()
-        # self.ros_node.get_logger().info(f"start tf node 2 ...")
-        # try:
-        #     transform = self.buffer.lookup_transform(#Buffer.lookup_transform(#tf_buffer.lookup_transform(
-        #     'map',          # 参考坐标系
-        #     'base_link',    # 机器人本体坐标系
-        #     self.ros_node.get_clock().now()#time.Time()  # 获取最新变换
-        # )
-        #     self.ros_node.get_logger().info(f"start getting tf msg ...")
-
-
         if self.transform is not None:
             transform = self.transform
-
-
-    
-    # 机器人在地图中的位置
             x = transform.transform.translation.x
             y = transform.transform.translation.y
             z = transform.transform.translation.z
     
-            self.ros_node.get_logger().warn(f"机器人位置: x={x:.2f}, y={y:.2f}, z={z:.2f}")
+            self.ros_node.get_logger().warn(f"Robot position: x={x:.2f}, y={y:.2f}, z={z:.2f}")
     
-        # except Exception as e:
-        #     print(f"无法获取变换: {e}")
-
-        # if not x==0:
         
             return NodeMsg.SUCCEEDED
         else:
@@ -1789,99 +1742,6 @@ class DistanceTest(Leaf):
 
     def _do_untick(self):
         return NodeMsg.IDLE
-    
-
-
-# @define_bt_node(NodeConfig(
-#     options={"distance_limit":int},
-#     inputs={},  
-#     outputs={},
-#     max_children=0,
-#     ))
-# class GetDistance(Leaf):##Leaf？
-#     """Gets a location name from the queue"""
-
-   
-#     def _do_setup(self):
-        
-        
-#         self.distance_limit = self.options["distance_limit"]
-#         self.peer_name = peer_name
-
-#         # 订阅对方位置
-#         self.ros_node.create_subscription(
-#             PoseStamped, f'/{peer_name}/pose', self.peer_pose_cb, 10)
-
-#         # 订阅自己位置（也可用 tf，这里简单处理）
-#         self.create_subscription(
-#             PoseStamped, f'/{self.ros_node.get_namespace()}/pose', self.own_pose_cb, 10)
-        
-#         # 订阅对方位置
-        
-
-#         # 通信话题（距离内才发布）
-#         self.in_range = self.ros_node.create_publisher(Bool, f'/{self.ros_node.get_namespace()}/to_{peer_name}', 10)
-
-#         self.own_pos = None
-#         self.peer_pos = None
-#         self.timer = self.ros_node.create_timer(0.1, self.check_distance)
-
-#     @abstractmethod
-#     def own_pose_cb(self, msg):
-#         self.own_pos = msg.pose.position
-
-#     @abstractmethod
-#     def peer_pose_cb(self, msg):
-#         self.peer_pos = msg.pose.position
-
-#     @abstractmethod
-#     def check_distance(self):
-#         if self.own_pos is None or self.peer_pos is None:
-#             return
-
-#         dx = self.own_pos.x - self.peer_pos.x
-#         dy = self.own_pos.y - self.peer_pos.y
-#         dist = math.hypot(dx, dy)
-
-#         if dist <= self.threshold:
-#             # 发布通信消息（示例）
-#             msg = Bool()
-#             msg.data = f'Hello from {self.get_namespace()}'
-#             self.pub.publish(msg)
-#             self.get_logger().info_once(f'距离 {dist:.2f} m, 通信开启')
-#         else:
-#             self.get_logger().info_once(f'距离 {dist:.2f} m, 通信断开')
-        
-#         #self.input["get_msg"]=NodeData.set_updated("get_msg")
-        
-#     def _do_tick(self):##tick(self):     #update(self):
-#         """Checks for the status of the navigation action"""
-#         # If there is a result, we can check the status of the action directly.
-#         # Otherwise, the action is still running.
-        
-        
-#         #self.inputs.get_callback("get_msg")
-#         #self.inputs.handle_subscriptions()
-        
-#         self.logwarn(self.inputs.is_updated("get_msg"))
-#         self.logwarn(self.inputs["get_msg"])
-#         self.outputs["target_color"] = 'blue'
-#         self.outputs["next_target"] = 'red'
-#         if self.inputs["get_msg"]==[]:
-#             return NodeMsg.RUNNING
-#         else:
-#             if self.outputs["target_color"] is not None: #target_color is not None:
-#                 self.logwarn(self.inputs["get_msg"])
-#                 if len(self.inputs["get_msg"])<5:
-#                     self.outputs["target_color"] = self.inputs["get_msg"]
-#                 return NodeMsg.SUCCEEDED
-#             else:
-#                 return NodeMsg.FAILED
-#     def _do_shutdown(self):
-#         pass
-
-#     def _do_reset(self):
-#         return NodeMsg.IDLE
 
     def _do_untick(self):
         return NodeMsg.IDLE

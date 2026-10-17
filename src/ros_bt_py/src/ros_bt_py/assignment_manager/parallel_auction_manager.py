@@ -388,17 +388,17 @@ class ParallelAuctionManager(AssignmentManager):
 
 
 
-        # 订阅对方位置  #################################################################    
+        # subscribe other's position  #################################################################    
     def own_pose_cb(self, msg):
         ns1=self.node.get_namespace().lstrip('/')
         print(ns1)
-        if msg.transforms[0].header.frame_id == f'{ns1}/odom' and msg.transforms[0].child_frame_id == f'{ns1}/base_footprint':#原来frame_id没有前缀
+        if msg.transforms[0].header.frame_id == f'{ns1}/odom' and msg.transforms[0].child_frame_id == f'{ns1}/base_footprint':
             self.own_pos = msg.transforms[0]
             
     def peer_pose_cb(self, msg):
         ns2=self.other_id.lstrip('/')
         print(ns2)
-        if msg.transforms[0].header.frame_id == f'{ns2}/odom' and msg.transforms[0].child_frame_id == f'{ns2}/base_footprint':#原来frame_id没有前缀
+        if msg.transforms[0].header.frame_id == f'{ns2}/odom' and msg.transforms[0].child_frame_id == f'{ns2}/base_footprint':
             self.peer_pos = msg.transforms[0]
 
     def check_distance(self) -> bool:
@@ -419,20 +419,20 @@ class ParallelAuctionManager(AssignmentManager):
         self.node.get_logger().info(f"calculate distance: {self.dist}")
 
         if self.dist <= self.threshold:
-            # # 发布通信消息（示例）
+            # 
             # #assigned_symbol = self.node.set_parameters([('assigned_symbol',True)])
             # self.__distance_limit_calculate_pub.publish(
             #     DistanceCalculation(own_name=self.node.get_namespace(),other_name=self.other_id))
             # # msg = Bool()
             # # msg.data = f'Hello from {self.get_namespace()}'
             # # self.pub.publish(msg)
-            self.node.get_logger().info(f'距离 {self.dist}, 通信开启, 可报价')
+            self.node.get_logger().info(f'Distance {self.dist}, able to connect, start to bid')
             self.annc_num = self.annc_num + 2
             return True
         else:
-            self.node.get_logger().info(f'距离 {self.dist}, 通信断开, 不可报价')
+            self.node.get_logger().info(f'Distance {self.dist}, disable to connect, could not```````````````` bid')
             return False
-        # 订阅对方位置  #################################################################
+        #################################################################
     
     def __handle_announcement_msg(self, msg: AuctionMessage):
 
@@ -453,7 +453,7 @@ class ParallelAuctionManager(AssignmentManager):
                     depth=20,),
                 callback_group=ReentrantCallbackGroup())
 
-        # 订阅自己位置
+        
         self.own_pose_sub = self.node.create_subscription(
             tf2_msgs.msg.TFMessage, 
             "/tf",#f"{self.node.get_namespace()}/tf", 
@@ -569,13 +569,6 @@ class ParallelAuctionManager(AssignmentManager):
         if auction_status.is_closed :#or msg.timestamp > auction_status.deadline:     
 
 
-
-            ### 需要处理的！！！！！！！！！！！！！！！！！！！！！！！！！！
-            ###两个时间格式不一样，timestamp是包含seconds和nanoseconds，deadline只包含nanoseconds
-            ###具体设置是在find best executor格式部分
-
-
-
             self.node.get_logger().warn(
                 f"Ignoring bid from {msg.sender_id} for auction {msg.auction_id}, "
                 "as it arrived after the deadline!"
@@ -627,7 +620,7 @@ class ParallelAuctionManager(AssignmentManager):
 
                         bid_msg = AuctionMessage(
                             auction_id=auction_id,
-                            timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 !!!!!!!!!!!!!!!!!不确定
+                            timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 
                             sender_id=self.__local_topic_prefix,
                             message_type=AuctionMessage.BID,
                             bid=local_bid.bid,
@@ -722,7 +715,7 @@ class ParallelAuctionManager(AssignmentManager):
                 )
                 bid_msg = AuctionMessage(
                     auction_id=auction.auction_id,
-                    timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 !!!!!!!!!!!!!!!!!不确定
+                    timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 
                     sender_id=self.__local_topic_prefix,
                     message_type=AuctionMessage.BID,
                     bid=local_bid.bid,
@@ -740,7 +733,7 @@ class ParallelAuctionManager(AssignmentManager):
                 )
                 bid_msg = AuctionMessage(
                     auction_id=auction.auction_id,
-                    timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 !!!!!!!!!!!!!!!!!不确定
+                    timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 
                     sender_id=self.__local_topic_prefix,
                     message_type=AuctionMessage.BID,
                     bid=local_bid.bid,
@@ -789,7 +782,7 @@ class ParallelAuctionManager(AssignmentManager):
             return
 
     def find_best_capability_executor(
-        self, goal: FindBestCapabilityExecutor.Request, response:FindBestCapabilityExecutor.Response    ### change 0701 : add response 原因?????????????????
+        self, goal: FindBestCapabilityExecutor.Request, response:FindBestCapabilityExecutor.Response    ### change 0701 : add response 
     ) -> FindBestCapabilityExecutor.Response:
         """Find the best executor and implementation for a specifc capability interface.
 
@@ -807,7 +800,7 @@ class ParallelAuctionManager(AssignmentManager):
 
         current_auction_id = str(uuid.uuid4())
         now_time=self.node.get_clock().now().to_msg
-        current_deadline = self.node.get_clock().now()+self.__auction_duration   ### change 0701  格式是只有nano!!!!!!!!!!!!!!!!!! 不知道对时间计算会有什么影响
+        current_deadline = self.node.get_clock().now()+self.__auction_duration   ### change 0701  
         #Clock.now() + self.__auction_duration
         self.node.get_logger().warn(f"00000000000000000000 cut0.5 !")
 
@@ -824,7 +817,7 @@ class ParallelAuctionManager(AssignmentManager):
             #self.msg1
             AuctionMessage(
                 auction_id=current_auction_id,
-                timestamp=self.node.get_clock().now().to_msg(),# Clock.now(),    ### change 0701  !!!!!!!!!!!!!!!!!! 不知道对时间计算会有什么影响
+                timestamp=self.node.get_clock().now().to_msg(),# Clock.now(),    ### change 0701  
                 sender_id=self.__local_topic_prefix,
                 message_type=AuctionMessage.ANNOUNCEMENT,
                 interface=goal.capability,
@@ -835,13 +828,13 @@ class ParallelAuctionManager(AssignmentManager):
         )
         self.node.get_logger().warn(f"00000000000000000000 cut {self.__auction_duration} !")
 
-        time.sleep(10)#(self.__auction_duration + Duration(seconds=0.02)) #  change 0701 包括255行
-        ################## 时间已改，如果需要多机拍卖需要改回更长的等待时间
+        time.sleep(10)#(self.__auction_duration + Duration(seconds=0.02)) #  change 0701 
+        ################## change the waiting time duration
 
         self.__global_auction_message_pub.publish(
             AuctionMessage(
                 auction_id=current_auction_id,
-                timestamp=self.node.get_clock().now().to_msg(),# Clock.now(),    ### change 0701  !!!!!!!!!!!!!!!!!! 不知道对时间计算会有什么影响
+                timestamp=self.node.get_clock().now().to_msg(),# Clock.now(),    ### change 0701  
                 sender_id=self.__local_topic_prefix,
                 message_type=AuctionMessage.CLOSE,
             )
@@ -875,7 +868,7 @@ class ParallelAuctionManager(AssignmentManager):
         self.__global_auction_message_pub.publish(
             AuctionMessage(
                 auction_id=current_auction_id,
-                timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 !!!!!!!!!!!!!!!!!不确定
+                timestamp=self.node.get_clock().now().to_msg(), #Clock.now(), ### change 0701 
                 sender_id=self.__local_topic_prefix,
                 message_type=AuctionMessage.RESULT,
                 bid=second_highest_bid,

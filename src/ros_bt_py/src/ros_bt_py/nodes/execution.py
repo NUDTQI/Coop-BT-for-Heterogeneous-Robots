@@ -80,7 +80,7 @@ class GetTaskOrder(Leaf):
     def _do_setup(self):    
         
         self.origional_req_pub = self.ros_node.create_publisher(
-                CapabilityRequest, #list 和 传递次数 发送人名称
+                CapabilityRequest, 
                 f"{self.ros_node.get_namespace()}/BehaviorTreeNode/origional_capability_request",
                 qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -109,12 +109,12 @@ class GetTaskOrder(Leaf):
                     self.task_order.append(index_list)
             self.ros_node.get_logger().warn(f"task order: {self.task_order}")
             if len(self.task_order) > 0:
-                self.outputs["origional_cap_order"]=self.task_order  ### list格式，还没有转换成CapReq格式
+                self.outputs["origional_cap_order"]=self.task_order  ### list
         if not len(self.task_order) == 0:
             return NodeMsg.SUCCEEDED
         else:
             return NodeMsg.FAILED
-        ####### remote 和 cap+get task order并行
+        ####### remote and cap+get task order
         
 
     def _do_shutdown(self):
@@ -144,7 +144,7 @@ class CheckCapExecutor(Leaf):##Leaf？
 
     def _do_setup(self):#setup(self):
         self.origional_req_pub = self.ros_node.create_publisher(
-                CapabilityRequest, #list 和 传递次数 发送人名称
+                CapabilityRequest, #list and pass time
                 f"{self.ros_node.get_namespace()}/BehaviorTreeNode/origional_capability_request",
                 qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -175,27 +175,24 @@ class CheckCapExecutor(Leaf):##Leaf？
         for v in self.team_cap_record:
             self.ros_node.get_logger().warn(f"v:{v}")
             index = self.team_cap_record.index(v,last_index)  
-            ### 防止有相同的能力列表，每次都从上一次结束的位置后面开始搜索
-            for w in v: ### 如果一个agent提供不止一种能力
-                self.new_cap_order.append(w)   ### 依次取出能力，形成1cap-1owner序列
+            for w in v: ### if a robot order multi caps
+                self.new_cap_order.append(w)   ### take the caps in order as 1cap-1owner list
                 self.new_cap_owner.append(self.team_member_record[index])
             last_index = index+1
         
 
-        for v in self.task_order: ### 每种能力
+        for v in self.task_order: ### each cap
             last_index = 0
-            for w in v:   ### 该种类能力的需求个数
+            for w in v:   ### cap number
                 self.target_index = self.new_cap_order.index(w,last_index)
                 self.target_robot = self.new_cap_owner[self.target_index]
 
-                ### 发出执行指令并回收结果
-
-                
+                ### send the order and wait for the result
 
 
                 self.ros_node.get_logger().warn(f"target cap:{w}, target robot: {self.target_robot}")
 
-                ### 如果成功
+                ### if succeed
                 last_index = self.target_index+1
 
 
@@ -243,8 +240,6 @@ class GetCapList(Leaf):
             self.ros_node.set_parameters([Parameter('parallel_number',Parameter.Type.INTEGER,msg.data)])
 
 
-    ## 增加每个cap的input（NodeData格式），cap input前面的输入部分改成sub+msg2filed格式
-    ## cap req也要改，改成input_list+caplist格式
     
     def _do_setup(self):    
         
@@ -255,7 +250,7 @@ class GetCapList(Leaf):
         with open(self.options["file_path"]) as f:
             self.caps = yaml.load(f, Loader=yaml.FullLoader)
         # self.execute_req_pub = self.ros_node.create_publisher(
-        #         DistanceCalculation, #list 和 传递次数 发送人名称
+        #         DistanceCalculation, 
         #         f"{self.ros_node.get_namespace()}/BehaviorTreeNode/capability_exe_allocation",
         #         qos_profile=QoSProfile(
         #         reliability=QoSReliabilityPolicy.RELIABLE,
@@ -277,7 +272,7 @@ class GetCapList(Leaf):
         # )
         self.outputs["cap_req"] = []
         
-        ### 循环取出cap_list中的元素，发送信息给执行节点，收到msg返回后再循环+1
+        ### take out things in cap_list, send msg to execution nodes, wait for results and loop
         count = 0
         #self.cap_execute:list=[]
         self._old_state = self.state
@@ -287,9 +282,9 @@ class GetCapList(Leaf):
         self.number = 0
         self.num_count = 0
 
-        ### 标志该任务所需的能力均执行完毕
+        ### all caps is done
         self.task_exe_finish_pub = self.ros_node.create_publisher(
-                DistanceCalculation, #list 和 传递次数 发送人名称
+                DistanceCalculation, 
                 f"{self.ros_node.get_namespace()}/BehaviorTreeNode/task_exe_finish",
                 qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -323,24 +318,7 @@ class GetCapList(Leaf):
         
     def _do_tick(self):     
         """Output the value of a symbol"""
-        # self.outputs["cap_req"] = []
         
-        # ### 循环取出cap_list中的元素，发送信息给执行节点，收到msg返回后再循环+1
-        # count = 0
-        # self.cap_execute:list=[]
-
-
-
-        
-
-
-        # if self.simulate_tick:
-        #     # self.ros_node.get_logger().debug(f"Simulating tick. {self.name} is not executing!")
-        #     if self.succeed_always:
-        #         return NodeMsg.SUCCEEDED
-        #     return NodeMsg.RUNNING
-
-        # 状态恢复
 
         if self.simulate_tick:
             return NodeMsg.RUNNING
@@ -348,7 +326,6 @@ class GetCapList(Leaf):
         if self.state == NodeMsg.PAUSED:
             self.state = self._old_state
 
-        # 处理不同的状态
         if self.state == NodeMsg.IDLE:
             self.ros_node.get_logger().warn(f"start cap execution !")
             return NodeMsg.ASSIGNED
@@ -362,7 +339,6 @@ class GetCapList(Leaf):
             self.ros_node.get_logger().warn(f"start cap running !")
             return self._tick_running()
 
-        # 未定义状态，返回失败
         return NodeMsg.FAILED
 
 
@@ -370,7 +346,7 @@ class GetCapList(Leaf):
     def _tick_assigned(self) -> str:
         if self.ros_node.get_parameter("center_symbol").value:
             if not self.initial_exe_list_symbol:
-                ## 记录原任务中所需要的能力
+                ## record caps in need
                 task_req_list:list=self.ros_node.get_parameter("origional_task_req").value
                 self.ros_node.get_logger().warn(f"task_req:{task_req_list}")
                 
@@ -403,10 +379,9 @@ class GetCapList(Leaf):
                             callback_group=ReentrantCallbackGroup())
                     #if self.cap_owner==self.ros_node.get_namespace():
                     self.parallel_cap_number.publish(Int16(data=len(self.cap_list)))
-                    ########### 问题：收到的时间晚于建立sub的时间
                     self.ros_node.get_logger().warn(f"Send parallel cap number to {self.cap_owner}!")
 
-                    ## 记录每个能力需要的执行成员
+                    ## record the cap executor
                     for n in self.cap_list:
                         for p in self.cap_to_exe:
                             self.ros_node.get_logger().warn(f"cap:{n},to_exe{p}")
@@ -482,7 +457,7 @@ class GetCapList(Leaf):
                 
                 
                 self.execute_req_pub = self.ros_node.create_publisher(
-                DistanceCalculation, #list 和 传递次数 发送人名称
+                DistanceCalculation, 
                 f"{self.cap_owner}/BehaviorTreeNode/capability_exe_allocation",
                 qos_profile=QoSProfile(
                 reliability=QoSReliabilityPolicy.RELIABLE,
