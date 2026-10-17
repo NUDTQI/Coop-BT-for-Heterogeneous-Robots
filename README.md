@@ -83,7 +83,7 @@ To configuring the capabilities for a single robot, the loading tree should be r
 
 ## Simulation Environment Setting
 
-The simulation workshop is in *`simulation` branch*. To view the running process of the example, you need to open the simulation environment before starting the Coop-BT. The command is as follows.
+The simulation workshop is in *`simulation-environment` branch*. To view the running process of the example, you need to open the simulation environment before starting the Coop-BT. The command is as follows.
 
 ```bash
 $ cd try4_ws
