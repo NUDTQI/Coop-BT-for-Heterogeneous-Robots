@@ -83,7 +83,7 @@ To configuring the capabilities for a single robot, the loading tree should be r
 
 ## Simulation Environment Setting
 
-The simulation workshop is in `simulation` branch. To view the running process of the example, you need to open the simulation environment before starting the Coop-BT. The command is as follows.
+The simulation workshop is in *`simulation` branch*. To view the running process of the example, you need to open the simulation environment before starting the Coop-BT. The command is as follows.
 
 ```bash
 $ cd try4_ws
@@ -92,3 +92,4 @@ $ source ./install/setup.bash
 $ source ./install/tb3_worlds/share/tb3_worlds/local_setup.bash
 $ ros2 launch tb3_worlds tb3_demo_world.launch.py
 ```
+In addition, you need to put the `try4_ws` folder in the same directory as the src folder of Coop-BT.
