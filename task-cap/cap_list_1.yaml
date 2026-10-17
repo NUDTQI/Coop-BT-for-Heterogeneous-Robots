@@ -1,0 +1,4 @@
+# Defines object locations as [x, y, theta]
+1: MonitorCapability
+2: RescueCapability
+3: RemovalCapability

@@ -140,7 +140,7 @@ nodes:
     options:
       - key: file_path
         serialized_value: >-
-          "/home/sherry/try4_ws/install/tb3_worlds/share/tb3_worlds/maps/sim_house_locations.yaml"
+          "/try4_ws/install/tb3_worlds/share/tb3_worlds/maps/sim_house_locations.yaml"
         serialized_type: '{"py/type": "builtins.str"}'
       - key: list_type
         serialized_value: '{"py/type": "builtins.list"}'
@@ -472,7 +472,7 @@ nodes:
     child_names: []
     options:
       - key: subtree_path
-        serialized_value: '"file:///home/sherry/\u4e0b\u8f7d/coop_bt-1/tree(64) green_subtree.yaml"'
+        serialized_value: '"file:///coop_bt/tree(64) green_subtree.yaml"'
         serialized_type: '{"py/type": "builtins.str"}'
       - key: use_io_nodes
         serialized_value: 'true'
@@ -525,7 +525,7 @@ nodes:
     child_names: []
     options:
       - key: subtree_path
-        serialized_value: '"file:///home/sherry/\u4e0b\u8f7d/coop_bt-1/tree(64) red_subtree_4.yaml"'
+        serialized_value: '"file:///coop_bt/tree(64) red_subtree_4.yaml"'
         serialized_type: '{"py/type": "builtins.str"}'
       - key: use_io_nodes
         serialized_value: 'true'
@@ -579,8 +579,7 @@ nodes:
     options:
       - key: subtree_path
         serialized_value: >-
-          "file:///home/sherry/\u4e0b\u8f7d/coop_bt-1/tree(64)
-          blue_subtree_4.yaml"
+          "file:///coop_bt/tree(64) blue_subtree_4.yaml"
         serialized_type: '{"py/type": "builtins.str"}'
       - key: use_io_nodes
         serialized_value: 'true'

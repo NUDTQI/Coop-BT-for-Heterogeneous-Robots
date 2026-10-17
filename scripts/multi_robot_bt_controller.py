@@ -31,7 +31,7 @@ ROBOT_CONFIGS: Dict[str, RobotConfig] = {
     "turtle5": RobotConfig("turtle5", 9115, "127.3.1.1", 8110, "127.3.1.1"),
 }
 
-WORKSPACE_PATH = "/home/sherry/coop-bt-ws"
+WORKSPACE_PATH = "" #"/home/coop-bt-ws"
 
 
 class MultiRobotBTController:

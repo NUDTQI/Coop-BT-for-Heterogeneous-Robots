@@ -50,7 +50,7 @@ nodes:
     options:
       - key: file_path
         serialized_value: >-
-          "/home/sherry/try4_ws/install/tb3_worlds/share/tb3_worlds/maps/sim_house_locations.yaml"
+          "/try4_ws/install/tb3_worlds/share/tb3_worlds/maps/sim_house_locations.yaml"
         serialized_type: '{"py/type": "builtins.str"}'
       - key: list_type
         serialized_value: '{"py/type": "builtins.list"}'
@@ -268,7 +268,7 @@ nodes:
     child_names: []
     options:
       - key: file_path
-        serialized_value: '"/home/sherry/ros2-cap4-bt-py-ws-1/task_list_1.yaml"'
+        serialized_value: '"/task-cap/task_list_1.yaml"'
         serialized_type: '{"py/type": "builtins.str"}'
     inputs: []
     outputs:
@@ -813,7 +813,7 @@ nodes:
     child_names: []
     options:
       - key: file_path
-        serialized_value: '"/home/sherry/ros2-cap4-bt-py-ws-1/cap_list_1.yaml"'
+        serialized_value: '"/task-cap/cap_list_1.yaml"'
         serialized_type: '{"py/type": "builtins.str"}'
     inputs:
       - key: team_cap_list

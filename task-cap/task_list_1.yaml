@@ -1,0 +1,4 @@
+# Defines object locations as [x, y, theta]
+red: [1,0,1]
+blue: [1,1,1]
+green: [2,1,0]
